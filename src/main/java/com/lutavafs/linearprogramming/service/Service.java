@@ -7,7 +7,7 @@ import java.util.Scanner;
 public class Service {
     private static final Scanner scan = new Scanner(System.in);
 
-    public static void main(String[] args) {
+    public static void selecionarAlgoritmo(String[] args) {
         System.out.println("""
                 Escolha um algoritmo:
                 1 - Simplex
