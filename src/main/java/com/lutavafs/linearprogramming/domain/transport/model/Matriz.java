@@ -1,4 +1,4 @@
-package main.models;
+package com.lutavafs.linearprogramming.domain.transport.model;
 
 import java.util.ArrayList;
 import java.util.List;

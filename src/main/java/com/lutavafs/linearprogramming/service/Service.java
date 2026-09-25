@@ -1,8 +1,10 @@
-package main;
+package com.lutavafs.linearprogramming.service;
+
+import com.lutavafs.linearprogramming.solver.*;
 
 import java.util.Scanner;
 
-public class App {
+public class Service {
     private static final Scanner scan = new Scanner(System.in);
 
     public static void main(String[] args) {

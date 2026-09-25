@@ -1,4 +1,4 @@
-package main.models;
+package com.lutavafs.linearprogramming.domain.simplex.model;
 
 import java.util.ArrayList;
 import java.util.List;

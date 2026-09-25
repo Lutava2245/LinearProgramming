@@ -1,4 +1,4 @@
-package main.models;
+package com.lutavafs.linearprogramming.domain.transport.model;
 
 public class Demanda extends CampoTransporte {
     private final int DESTINO;

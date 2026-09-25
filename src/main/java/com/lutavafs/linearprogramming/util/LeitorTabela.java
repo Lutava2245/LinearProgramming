@@ -1,12 +1,12 @@
-package main.util;
+package com.lutavafs.linearprogramming.util;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import main.models.CampoSimplex;
-import main.models.Tabela;
+import com.lutavafs.linearprogramming.domain.simplex.model.CampoSimplex;
+import com.lutavafs.linearprogramming.domain.simplex.model.Tabela;
 
 public class LeitorTabela {
     public static Tabela lerRestricoes(String pathMatriz, String pathVariaveis) throws IOException {

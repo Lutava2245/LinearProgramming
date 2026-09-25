@@ -1,4 +1,4 @@
-package main.models;
+package com.lutavafs.linearprogramming.domain.simplex.model;
 
 public class CampoSimplex {
     private final int HORIZONTAL;

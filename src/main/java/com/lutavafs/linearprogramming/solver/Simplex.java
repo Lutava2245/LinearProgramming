@@ -1,8 +1,8 @@
-package main;
+package com.lutavafs.linearprogramming.solver;
 
-import main.models.CampoSimplex;
-import main.models.Tabela;
-import main.util.LeitorTabela;
+import com.lutavafs.linearprogramming.domain.simplex.model.CampoSimplex;
+import com.lutavafs.linearprogramming.domain.simplex.model.Tabela;
+import com.lutavafs.linearprogramming.util.LeitorTabela;
 
 import java.util.Arrays;
 

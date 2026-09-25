@@ -1,4 +1,4 @@
-package main.models;
+package com.lutavafs.linearprogramming.domain.transport.model;
 
 public abstract class CampoTransporte {
     protected Integer valor;

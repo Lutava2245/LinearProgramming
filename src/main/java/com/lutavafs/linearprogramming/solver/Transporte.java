@@ -1,8 +1,8 @@
-package main;
+package com.lutavafs.linearprogramming.solver;
 
-import main.models.Custo;
-import main.models.Matriz;
-import main.util.LeitorMatriz;
+import com.lutavafs.linearprogramming.domain.transport.model.Custo;
+import com.lutavafs.linearprogramming.domain.transport.model.Matriz;
+import com.lutavafs.linearprogramming.util.LeitorMatriz;
 
 import java.util.ArrayList;
 import java.util.List;

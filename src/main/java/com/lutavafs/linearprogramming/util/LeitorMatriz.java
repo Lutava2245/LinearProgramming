@@ -1,6 +1,6 @@
-package main.util;
+package com.lutavafs.linearprogramming.util;
 
-import main.models.*;
+import com.lutavafs.linearprogramming.domain.transport.model.*;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
