@@ -7,6 +7,7 @@ import com.lutavafs.linearprogramming.domain.simplex.model.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.jspecify.annotations.NonNull;
+import org.springframework.stereotype.Service;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ import static com.lutavafs.linearprogramming.util.MathFormater.formatDouble;
 
 @Getter
 @Setter
+@Service
 public class SimplexSolver {
     private OptimizationType optimizationType;
     private double[] objectiveFunction;
