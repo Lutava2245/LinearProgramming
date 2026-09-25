@@ -1,13 +1,13 @@
 package main.models;
 
-public class Campo {
+public class CampoSimplex {
     private final int HORIZONTAL;
     private final int VERTICAL;
     private final String VARIAVEL;
     private double valor;
     private double constanteM;
 
-    public Campo(int horizontal, int vertical, String variavel, double valor, double constanteM) {
+    public CampoSimplex(int horizontal, int vertical, String variavel, double valor, double constanteM) {
         this.HORIZONTAL = horizontal;
         this.VERTICAL = vertical;
         this.VARIAVEL = variavel;

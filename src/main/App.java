@@ -1,7 +1,20 @@
 package main;
 
+import java.util.Scanner;
+
 public class App {
+    private static final Scanner scan = new Scanner(System.in);
+
     public static void main(String[] args) {
-        Simplex.calcular();
+        System.out.println("""
+                Escolha um algoritmo:
+                1 - Simplex
+                2 - Problema de Transporte
+                """);
+        if (scan.nextInt() == 1) {
+            Simplex.calcular();
+        } else {
+            Transporte.calcular();
+        }
     }
 }

@@ -5,27 +5,27 @@ import java.util.List;
 import java.util.Map;
 
 public class Tabela {
-    private final Campo[][] valores;
-    private Map<String, Campo> variaveis;
-    private Map<String, Campo[]> linhas;
+    private final CampoSimplex[][] valores;
+    private Map<String, CampoSimplex> variaveis;
+    private Map<String, CampoSimplex[]> linhas;
 
-    public Tabela(Campo[][] variaveis) {
+    public Tabela(CampoSimplex[][] variaveis) {
         this.valores = variaveis;
     }
 
-    public Map<String, Campo> getVariaveis() {
+    public Map<String, CampoSimplex> getVariaveis() {
         return variaveis;
     }
 
-    public void setVariaveis(Map<String, Campo> variaveis) {
+    public void setVariaveis(Map<String, CampoSimplex> variaveis) {
         this.variaveis = variaveis;
     }
 
-    public Map<String, Campo[]> getLinhas() {
+    public Map<String, CampoSimplex[]> getLinhas() {
         return linhas;
     }
 
-    public void setLinhas(Map<String, Campo[]> linhas) {
+    public void setLinhas(Map<String, CampoSimplex[]> linhas) {
         this.linhas = linhas;
     }
 
@@ -53,17 +53,17 @@ public class Tabela {
         return dual;
     }
 
-    public Campo[] getLinha(int horizontal) {
+    public CampoSimplex[] getLinha(int horizontal) {
         return valores[horizontal];
     }
 
-    public Campo getCampo(int horizontal, int vertical) {
+    public CampoSimplex getCampo(int horizontal, int vertical) {
         return valores[horizontal][vertical];
     }
 
-    public List<Campo> getConstantes() {
-        List<Campo> constantes = new ArrayList<>();
-        for (Campo[] valore : valores) {
+    public List<CampoSimplex> getConstantes() {
+        List<CampoSimplex> constantes = new ArrayList<>();
+        for (CampoSimplex[] valore : valores) {
             constantes.add(valore[valore.length - 1]);
         }
         return constantes;
@@ -78,7 +78,7 @@ public class Tabela {
     }
 
     public void adicionarCampo(int horizontal, int vertical, String variavel, double valor, double constanteM) {
-        valores[horizontal][vertical] = new Campo(horizontal, vertical, variavel, valor, constanteM);
+        valores[horizontal][vertical] = new CampoSimplex(horizontal, vertical, variavel, valor, constanteM);
     }
 
     public void editarValor(int horizontal, int vertical, double valor) {
@@ -92,8 +92,8 @@ public class Tabela {
     @Override
     public String toString() {
         StringBuilder matriz = new StringBuilder();
-        for (Campo[] linha : valores) {
-            for (Campo campo : linha) {
+        for (CampoSimplex[] linha : valores) {
+            for (CampoSimplex campo : linha) {
                 matriz.append(campo).append(" ");
             }
             matriz.append("\n");

@@ -1,6 +1,6 @@
 package main;
 
-import main.models.Campo;
+import main.models.CampoSimplex;
 import main.models.Tabela;
 import main.util.LeitorTabela;
 
@@ -27,7 +27,7 @@ public class Simplex {
 
         do {
             double menorValor = Double.MAX_VALUE;
-            for (Campo campo : simplex.getLinha(0)) {
+            for (CampoSimplex campo : simplex.getLinha(0)) {
                 if (!campo.getVariavel().startsWith("x")) continue;
                 if (campo.getValor() < menorValor) {
                     menorValor = campo.getValor();
@@ -62,7 +62,7 @@ public class Simplex {
         if (infinito) {
             System.out.println("Não há Max " + simplex.getCampo(0, 0).getVariavel() + " porque " + simplex.getCampo(0, colunaPivo).getVariavel() + " tende ao infinito.");
         } else {
-            for (Campo campo : simplex.getLinha(0)) {
+            for (CampoSimplex campo : simplex.getLinha(0)) {
                 if (campo.getVariavel().startsWith("x") && campo.getValor() == 0) {
                     variasSolucoes = simplex.getVariaveis().get(campo.getVariavel()) == null;
                     break;
@@ -75,7 +75,7 @@ public class Simplex {
                 StringBuilder equacao = new StringBuilder();
                 equacao.append(simplex.getCampo(0, 0).getVariavel()).append(" =");
                 for (int i = 0; i < simplex.getLinha(0).length; i++) {
-                    Campo campo =  simplex.getCampo(0, i);
+                    CampoSimplex campo =  simplex.getCampo(0, i);
                     double valor = campo.getValor();
 
                     if (campo.getVariavel().startsWith("Z") || campo.getVariavel().startsWith("a") || campo.getVariavel().isBlank())
@@ -99,19 +99,19 @@ public class Simplex {
                 System.out.println(equacao + "\n");
             }
 
-            simplex.getVariaveis().forEach((variavel, campo) -> System.out.println(variavel + ": " + (
-                    campo == null
+            simplex.getVariaveis().forEach((variavel, campoSimplex) -> System.out.println(variavel + ": " + (
+                    campoSimplex == null
                             ? 0
-                            : campo.getValor() % 1 == 0
-                              ? String.format("%.0f", campo.getValor())
-                              : campo.getValor())));
+                            : campoSimplex.getValor() % 1 == 0
+                              ? String.format("%.0f", campoSimplex.getValor())
+                              : campoSimplex.getValor())));
         }
     }
 
-    public static void analisarValores() {
+    private static void analisarValores() {
         boolean possuiArtificiais = false;
         boolean dual = tabela.getCampo(0,0).getVariavel().equals("D");
-        for (Campo campo : tabela.getLinha(0)) {
+        for (CampoSimplex campo : tabela.getLinha(0)) {
             possuiArtificiais = campo.getConstanteM() > 0;
             if (possuiArtificiais) {
                 break;
@@ -126,7 +126,7 @@ public class Simplex {
     }
 
     private static void resetarLinhaZ() {
-        for (Campo campo : simplex.getLinha(0)) {
+        for (CampoSimplex campo : simplex.getLinha(0)) {
             if (campo.getVariavel().startsWith("Z")) continue;
             double valorM = campo.getConstanteM();
             for (String variavel : simplex.getLinhas().keySet()) {
@@ -143,7 +143,7 @@ public class Simplex {
         do {
             double menorValorM = Double.MAX_VALUE;
             double menorValor = Double.MAX_VALUE;
-            for (Campo campo : simplex.getLinha(0)) {
+            for (CampoSimplex campo : simplex.getLinha(0)) {
                 if (campo.getVariavel().startsWith("Z") || simplex.getConstantes().contains(campo)) {
                     continue;
                 }
@@ -183,7 +183,7 @@ public class Simplex {
         } while (true);
     }
 
-    public static void trocarVariaveis() {
+    private static void trocarVariaveis() {
         double[][] novosValores = new double[simplex.totalLinhas()][simplex.totalColunas()];
         double[] novasConstantesM = new double[simplex.totalColunas()];
 

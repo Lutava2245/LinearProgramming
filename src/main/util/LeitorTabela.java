@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
 
-import main.models.Campo;
+import main.models.CampoSimplex;
 import main.models.Tabela;
 
 public class LeitorTabela {
@@ -39,7 +39,7 @@ public class LeitorTabela {
     }
 
     private static Tabela getTabela(List<String[]> dados, String[] variaveisString, String[] linhasString) {
-        Tabela tabela = new Tabela(new Campo[dados.size()][dados.getFirst().length]);
+        Tabela tabela = new Tabela(new CampoSimplex[dados.size()][dados.getFirst().length]);
         for (int i = 0; i < dados.size(); i++) {
             for (int j = 0; j < dados.getFirst().length; j++) {
                 String variavel = j == dados.getLast().length - 1 ? "" : variaveisString[j];
@@ -51,7 +51,7 @@ public class LeitorTabela {
             }
         }
 
-        Map<String, Campo> variaveis = new TreeMap<>();
+        Map<String, CampoSimplex> variaveis = new TreeMap<>();
         for (String variavel : variaveisString) {
             variaveis.put(variavel, null);
         }
@@ -60,7 +60,7 @@ public class LeitorTabela {
         }
         tabela.setVariaveis(variaveis);
 
-        Map<String, Campo[]> linhas = new TreeMap<>();
+        Map<String, CampoSimplex[]> linhas = new TreeMap<>();
         for (int i = 0; i < linhasString.length; i++) {
             linhas.put(linhasString[i], tabela.getLinha(i));
         }
