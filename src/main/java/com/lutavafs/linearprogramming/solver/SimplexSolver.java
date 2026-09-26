@@ -27,14 +27,14 @@ public class SimplexSolver {
 
     public SimplexResult calculate() {
         createTableau();
-        iterations.add(getTableauResponse("Inicial"));
+        iterations.add(getIteration("Inicial"));
 
         if (tableau.haveArtificialVariables())
             resetZRow();
 
         iterate();
 
-        iterations.add(getTableauResponse("Final"));
+        iterations.add(getIteration("Final"));
         return getResult();
     }
 
@@ -152,7 +152,7 @@ public class SimplexSolver {
                 break;
 
             findPivotRow();
-            iterations.add(getTableauResponse("Iteração"));
+            iterations.add(getIteration("Iteração"));
             tableau.pivot(pivotRow, pivotColumn);
         } while (true);
     }
@@ -184,7 +184,7 @@ public class SimplexSolver {
         }
     }
 
-    protected Iteration getTableauResponse(String title) {
+    protected Iteration getIteration(String title) {
         String[] rowNames = new String[tableau.matrix().length + 1];
         String[][] matrix = new String[tableau.matrix().length + 1][tableau.matrix()[0].length];
 
@@ -220,7 +220,7 @@ public class SimplexSolver {
             String variableName = tableau.columnNames()[tableau.basicIndexes()[i]];
 
             if (variableName.startsWith("a") && tableau.matrix()[i][rightHandColumn] > 1e-6) {
-                return new SimplexResult(iterations, StatusResult.INFEASIBLE.getTitle(), optimizationType.getTitle(), 0.0, variableValues);
+                return new SimplexResult(iterations, StatusResult.INFEASIBLE.getTitle(), optimizationType.getTitle(), formatDouble(0), variableValues);
             }
         }
 
@@ -243,24 +243,34 @@ public class SimplexSolver {
                 ? StatusResult.FEASIBLE
                 : StatusResult.OPTIMAL;
 
-        return new SimplexResult(iterations, finalStatus.getTitle(), optimizationType.getTitle(), objectiveValue, variableValues);
+        return new SimplexResult(iterations, finalStatus.getTitle(), optimizationType.getTitle(), formatDouble(objectiveValue), variableValues);
     }
 
     private @NonNull Map<String, String> getVariableValues() {
-        Map<String, String> variableValues = new HashMap<>();
+        Map<String, String> variableValues = new TreeMap<>();
 
         for (int j = 1; j < tableau.columnNames().length - 1; j++) {
             variableValues.put(tableau.columnNames()[j], "0");
         }
 
         for (int i = 0; i < tableau.basicIndexes().length; i++) {
-            int colunaBasica = tableau.basicIndexes()[i];
-            String nomeVariavel = tableau.columnNames()[colunaBasica];
-            double valorRHS = tableau.matrix()[i][tableau.columnNames().length - 1];
-
-            variableValues.put(nomeVariavel, formatDouble(valorRHS));
+            int basicColumn = tableau.basicIndexes()[i];
+            variableValues.put(tableau.columnNames()[basicColumn], formatDouble(tableau.matrix()[i][tableau.columnNames().length - 1]));
         }
-        return variableValues;
+
+        Map<String, String> sortedVariables = new LinkedHashMap<>();
+
+        variableValues.forEach((key, value) -> {
+            if (key.startsWith("x")) sortedVariables.put(key, value);
+        });
+        variableValues.forEach((key, value) -> {
+            if (key.startsWith("s")) sortedVariables.put(key, value);
+        });
+        variableValues.forEach((key, value) -> {
+            if (key.startsWith("a")) sortedVariables.put(key, value);
+        });
+
+        return sortedVariables;
     }
 
     private boolean isBasic(int index) {
