@@ -1,9 +1,11 @@
-package com.lutavafs.linearprogramming.solver;
+package com.lutavafs.linearprogramming.solver.impl;
 
 import com.lutavafs.linearprogramming.domain.simplex.model.BigMCoefficient;
 import com.lutavafs.linearprogramming.domain.simplex.model.Iteration;
+import com.lutavafs.linearprogramming.domain.simplex.model.SimplexProblem;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.lutavafs.linearprogramming.util.SimplexAsserts.assertMatrixEquals;
@@ -12,10 +14,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class SimplexSolverTests {
 
+    private final SimplexSolver solver = new SimplexSolver();
+
     @Test
     public void createTableauTest() {
-        SimplexSolver solver = getMinExample();
-        solver.createTableau();
+        SimplexProblem problem = getMinExample();
+        solver.createTableau(problem);
 
         BigMCoefficient[] rowZ = {
                 new BigMCoefficient(1, 0),
@@ -37,17 +41,17 @@ public class SimplexSolverTests {
         String[] columnNames = {"-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS"};
         int[] basicIndexes = {5, 7, 8};
 
-        assertArrayEquals(rowZ, solver.getTableau().rowZ());
-        assertMatrixEquals(matrix, solver.getTableau().matrix());
-        assertArrayEquals(columnNames, solver.getTableau().columnNames());
-        assertArrayEquals(basicIndexes, solver.getTableau().basicIndexes());
+        assertArrayEquals(rowZ, problem.getTableau().getRowZ());
+        assertMatrixEquals(matrix, problem.getTableau().getMatrix());
+        assertArrayEquals(columnNames, problem.getTableau().getColumnNames());
+        assertArrayEquals(basicIndexes, problem.getTableau().getBasicIndexes());
     }
 
     @Test
     public void resetZRowTest() {
-        SimplexSolver solver = getMinExample();
-        solver.createTableau();
-        solver.resetZRow();
+        SimplexProblem problem = getMinExample();
+        solver.createTableau(problem);
+        solver.resetZRow(problem.getTableau());
 
         BigMCoefficient[] rowZ = {
                 new BigMCoefficient(1, 0),
@@ -62,17 +66,17 @@ public class SimplexSolverTests {
                 new BigMCoefficient(0, -50)
         };
 
-        assertArrayEquals(rowZ, solver.getTableau().rowZ());
+        assertArrayEquals(rowZ, problem.getTableau().getRowZ());
     }
 
     @Test
     public void pivotTest() {
-        SimplexSolver solver = getMinExample();
-        solver.createTableau();
-        solver.resetZRow();
-        solver.findPivotColumn();
-        solver.findPivotRow();
-        solver.getTableau().pivot(solver.getPivotRow(), solver.getPivotColumn());
+        SimplexProblem problem = getMinExample();
+        solver.createTableau(problem);
+        solver.resetZRow(problem.getTableau());
+        solver.findPivotColumn(problem.getTableau());
+        solver.findPivotRow(problem.getTableau());
+        problem.getTableau().pivot();
 
         BigMCoefficient[] rowZ = {
                 new BigMCoefficient(1, 0),
@@ -92,20 +96,22 @@ public class SimplexSolverTests {
                 {0, 1, 0, 2.0/3, 2.0/3, 0, 0, 0, 1.0/3, 10}
         };
 
-        assertEquals(1, solver.getPivotColumn());
-        assertEquals(2, solver.getPivotRow());
-        assertArrayEquals(rowZ, solver.getTableau().rowZ());
-        assertMatrixEquals(matrix, solver.getTableau().matrix());
+        assertEquals(1, problem.getTableau().getPivotColumn());
+        assertEquals(2, problem.getTableau().getPivotRow());
+        assertArrayEquals(rowZ, problem.getTableau().getRowZ());
+        assertMatrixEquals(matrix, problem.getTableau().getMatrix());
     }
 
     @Test
     public void iterateTest() {
-        SimplexSolver solver = getMinExample();
-        solver.createTableau();
-        solver.resetZRow();
-        solver.iterate();
+        SimplexProblem problem = getMinExample();
+        List<Iteration> iterations = new ArrayList<>();
 
-        List<Iteration> iterations = List.of(
+        solver.createTableau(problem);
+        solver.resetZRow(problem.getTableau());
+        solver.iterate(problem, iterations);
+
+        List<Iteration> iterationsExpected = List.of(
                 new Iteration(
                         "Iteração",
                         new int[] {1, 2},
@@ -132,6 +138,6 @@ public class SimplexSolverTests {
                 )
         );
 
-        assertIterableEquals(iterations, solver.getIterations());
+        assertIterableEquals(iterationsExpected, iterations);
     }
 }

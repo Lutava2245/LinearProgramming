@@ -1,7 +1,20 @@
 package com.lutavafs.linearprogramming.domain.simplex.model;
 
-public record Tableau(BigMCoefficient[] rowZ, double[][] matrix, String[] columnNames,
-                      int[] basicIndexes) {
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@RequiredArgsConstructor
+@Getter
+@Setter
+public class Tableau {
+    private final BigMCoefficient[] rowZ;
+    private final double[][] matrix;
+    private final String[] columnNames;
+    private final int[] basicIndexes;
+    private int pivotColumn = -1;
+    private int pivotRow = -1;
+
     public boolean haveArtificialVariables() {
         for (String column : columnNames) {
             if (column.startsWith("a")) {
@@ -11,7 +24,7 @@ public record Tableau(BigMCoefficient[] rowZ, double[][] matrix, String[] column
         return false;
     }
 
-    public void pivot(int pivotRow, int pivotColumn) {
+    public void pivot() {
         basicIndexes[pivotRow] = pivotColumn;
 
         double pivotElement = matrix[pivotRow][pivotColumn];

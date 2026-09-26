@@ -1,4 +1,4 @@
-package com.lutavafs.linearprogramming.solver;
+package com.lutavafs.linearprogramming.solver.impl;
 
 import com.lutavafs.linearprogramming.domain.simplex.enums.StatusResult;
 import com.lutavafs.linearprogramming.domain.simplex.model.Iteration;
@@ -16,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 public class SimplexSolverIntegrationTests {
 
+    private final SimplexSolver solver =  new SimplexSolver();
+
     @Test
     public void optimalMaxSimplexTest() {
-        SimplexSolver solver = getMaxExample();
-        SimplexResult result = solver.calculate();
+        SimplexResult result = solver.calculate(getMaxExample());
 
         List<Iteration> iterations = List.of(
                 new Iteration(
@@ -133,14 +134,13 @@ public class SimplexSolverIntegrationTests {
 
         assertIterableEquals(iterations, result.getIterations());
         assertEquals(StatusResult.OPTIMAL.getTitle(), result.getStatus());
-        assertEquals(105, result.getObjectiveValue());
+        assertEquals("105", result.getObjectiveValue());
         assertMapEquals(variableValues, result.getVariableValues());
     }
 
     @Test
     public void optimalMinSimplexTests() {
-        SimplexSolver solver = getMinExample();
-        SimplexResult result = solver.calculate();
+        SimplexResult result = solver.calculate(getMinExample());
 
         List<Iteration> iterations = List.of(
                 new Iteration(
@@ -206,7 +206,7 @@ public class SimplexSolverIntegrationTests {
 
         assertIterableEquals(iterations, result.getIterations());
         assertEquals(StatusResult.OPTIMAL.getTitle(), result.getStatus());
-        assertEquals(40, result.getObjectiveValue());
+        assertEquals("40", result.getObjectiveValue());
         assertMapEquals(variableValues, result.getVariableValues());
     }
 }

@@ -1,17 +1,19 @@
 package com.lutavafs.linearprogramming.domain.simplex.model;
 
 import com.lutavafs.linearprogramming.domain.simplex.enums.OptimizationType;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class SimplexProblem {
-    private OptimizationType optimizationType;
-    private double[] objectiveFunction;
-    private List<Constraint> constraints;
+    @NonNull private OptimizationType optimizationType;
+    @NonNull private Double[] objectiveFunction;
+    @NonNull private List<Constraint> constraints;
+    private Tableau tableau = null;
 }
