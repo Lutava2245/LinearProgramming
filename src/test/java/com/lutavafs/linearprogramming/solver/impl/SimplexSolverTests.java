@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.lutavafs.linearprogramming.util.SimplexAsserts.assertMatrixEquals;
-import static com.lutavafs.linearprogramming.util.SimplexTestFactories.getMinExample;
+import static com.lutavafs.linearprogramming.util.SimplexTestFactory.getMinExample;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SimplexSolverTests {

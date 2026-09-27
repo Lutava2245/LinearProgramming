@@ -4,6 +4,7 @@ import com.lutavafs.linearprogramming.domain.simplex.enums.ConstraintType;
 import com.lutavafs.linearprogramming.domain.simplex.enums.OptimizationType;
 import com.lutavafs.linearprogramming.domain.simplex.enums.StatusResult;
 import com.lutavafs.linearprogramming.domain.simplex.model.*;
+import com.lutavafs.linearprogramming.exception.SimplexConvergenceException;
 import com.lutavafs.linearprogramming.solver.Solver;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
@@ -20,15 +21,16 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         List<Iteration> iterations = new ArrayList<>();
 
         createTableau(problem);
-        iterations.add(getIteration(problem, "Inicial"));
 
-        if (problem.getTableau().haveArtificialVariables())
+        if (problem.getTableau().haveArtificialVariables()) {
+            iterations.add(getIteration(problem, "Inicial"));
             resetZRow(problem.getTableau());
+        }
 
-        iterate(problem, iterations);
+        StatusResult status = iterate(problem, iterations);
 
         iterations.add(getIteration(problem, "Final"));
-        return getResult(problem, iterations);
+        return getResult(problem, iterations, status);
     }
 
     public void createTableau(SimplexProblem problem) {
@@ -134,16 +136,27 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         }
     }
 
-    public void iterate(SimplexProblem problem, List<Iteration> iterations) {
-        do {
+    public StatusResult iterate(SimplexProblem problem, List<Iteration> iterations) {
+        final int MAX_ITERATIONS = 1000;
+        int currentIteration = 0;
+
+        while (currentIteration < MAX_ITERATIONS) {
             BigMCoefficient lowestCoefficient = findPivotColumn(problem.getTableau());
+
             if (lowestCoefficient.bigM() >= 0 && lowestCoefficient.value() >= 0)
-                break;
+                return StatusResult.OPTIMAL;
 
             findPivotRow(problem.getTableau());
+            if (problem.getTableau().getPivotRow() == -1) {
+                return StatusResult.UNBOUNDED;
+            }
+
             iterations.add(getIteration(problem, "Iteração"));
             problem.getTableau().pivot();
-        } while (true);
+            currentIteration++;
+        }
+
+        throw new SimplexConvergenceException();
     }
 
     public BigMCoefficient findPivotColumn(Tableau tableau) {
@@ -160,17 +173,27 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
     }
 
     public void findPivotRow(Tableau tableau) {
+        int pivotColumn = tableau.getPivotColumn();
+        int chosenRow = -1;
         double lowest = Double.MAX_VALUE;
+
         for (int i = 0; i < tableau.getMatrix().length; i++) {
-            double div = tableau.getMatrix()[i][tableau.getMatrix()[i].length - 1]
-                    / tableau.getMatrix()[i][tableau.getPivotColumn()];
-            if (div < 0)
-                continue;
-            if (lowest > div) {
-                lowest = div;
-                tableau.setPivotRow(i);
+            double columnValue = tableau.getMatrix()[i][pivotColumn];
+            if (columnValue > 1e-9) {
+                double rightHandValue = tableau.getMatrix()[i][tableau.getMatrix()[i].length - 1];
+                if (Math.abs(rightHandValue) < 1e-9) {
+                    rightHandValue = 0.0;
+                }
+
+                double div = rightHandValue / columnValue;
+                if (div < lowest) {
+                    lowest = div;
+                    chosenRow = i;
+                }
             }
         }
+
+        tableau.setPivotRow(chosenRow);
     }
 
     protected Iteration getIteration(SimplexProblem problem, String title) {
@@ -203,11 +226,14 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         );
     }
 
-    public SimplexResult getResult(SimplexProblem problem, List<Iteration> iterations) {
+    public SimplexResult getResult(SimplexProblem problem, List<Iteration> iterations, StatusResult status) {
         Tableau tableau = problem.getTableau();
-
         final int rightHandColumn = tableau.getColumnNames().length - 1;
         Map<String, String> variableValues = getVariableValues(tableau);
+
+        if (status == StatusResult.UNBOUNDED) {
+            return new SimplexResult(iterations, status.getTitle(), problem.getOptimizationType().getTitle(), "NA", variableValues);
+        }
 
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             String variableName = tableau.getColumnNames()[tableau.getBasicIndexes()[i]];
@@ -217,12 +243,11 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
             }
         }
 
-        boolean infinity = false;
         for (int j = 1; j < rightHandColumn; j++) {
             if (tableau.getColumnNames()[j].startsWith("x") && !isBasic(tableau, j)) {
                 BigMCoefficient coefficient = tableau.getRowZ()[j];
                 if (Math.abs(coefficient.bigM()) < 1e-6 && Math.abs(coefficient.value()) < 1e-6) {
-                    infinity = true;
+                    status = StatusResult.MULTIPLE_OPTIMAL;
                     break;
                 }
             }
@@ -232,11 +257,13 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
                 ? tableau.getRowZ()[rightHandColumn].value()
                 : tableau.getRowZ()[rightHandColumn].value() * (-1);
 
-        StatusResult finalStatus = infinity
-                ? StatusResult.FEASIBLE
-                : StatusResult.OPTIMAL;
-
-        return new SimplexResult(iterations, finalStatus.getTitle(), problem.getOptimizationType().getTitle(), formatDouble(objectiveValue), variableValues);
+        return new SimplexResult(
+                iterations,
+                status.getTitle(),
+                problem.getOptimizationType().getTitle(),
+                formatDouble(objectiveValue),
+                variableValues
+        );
     }
 
     private @NonNull Map<String, String> getVariableValues(Tableau tableau) {

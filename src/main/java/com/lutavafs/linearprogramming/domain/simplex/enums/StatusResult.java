@@ -7,8 +7,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum StatusResult {
     OPTIMAL("Solução ótima"),
-    FEASIBLE("Viável"),
-    INFEASIBLE("Inviável");
+    MULTIPLE_OPTIMAL("Múltiplas Soluções"),
+    INFEASIBLE("Inviável"),
+    UNBOUNDED("Ilimitado"),
+    DEGENERATE_CYCLING("Degeneração");
 
     final String title;
 }
