@@ -15,7 +15,7 @@ function addField() {
     for (let i = 0; i < coefficientCount; i++) {
         objHtml += `
             <div class="flex items-center gap-1">
-                <input type="number" class="w-8 p-1 border-b-2 border-zinc-300 focus:outline-none focus:border-zinc-800 text-md text-center" name="objectiveFunction[${i}]" placeholder="0" required />
+                <input type="number" step="any" class="w-12 p-1 border-b-2 border-zinc-300 focus:outline-none focus:border-zinc-800 text-md text-center" name="objectiveFunction[${i}]" placeholder="0" required />
                 <span class="text-md font-medium text-zinc-700">x<sub>${i + 1}</sub></span>
                 ${i < coefficientCount - 1 ? '<span class="text-zinc-400 font-bold mx-1">+</span>' : ''}
             </div>
@@ -36,7 +36,7 @@ function addField() {
         for (let j = 0; j < coefficientCount; j++) {
             htmlStructure += `
                 <div class="flex items-center gap-1">
-                    <input type="number" class="w-8 max-w-auto p-1 border-b-2 border-zinc-300 bg-white focus:outline-none focus:border-zinc-800 text-md text-center" name="constraints[${i}].coefficients[${j}]" placeholder="0" required />
+                    <input type="number" step="any" class="w-12 max-w-auto p-1 border-b-2 border-zinc-300 bg-white focus:outline-none focus:border-zinc-800 text-md text-center" name="constraints[${i}].coefficients[${j}]" placeholder="0" required />
                     <span class="text-md font-medium text-zinc-700">x<sub>${j + 1}</sub></span>
                     ${j < coefficientCount - 1 ? '<span class="text-zinc-400 font-bold mx-1">+</span>' : ''}
                 </div>
@@ -50,7 +50,7 @@ function addField() {
                     <option value="EQUAL">=</option>
                 </select>
 
-                <input type="number" class="w-12 p-1 border-b-2 border-zinc-300 bg-white focus:outline-none focus:border-zinc-800 text-md font-semibold text-center" name="constraints[${i}].rightHandValue" placeholder="0" required />
+                <input type="number" step="any" class="w-16 p-1 border-b-2 border-zinc-300 bg-white focus:outline-none focus:border-zinc-800 text-md font-semibold text-center" name="constraints[${i}].rightHandValue" placeholder="0" required />
             </div>
         `;
 
