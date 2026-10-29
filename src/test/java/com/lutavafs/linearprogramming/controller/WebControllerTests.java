@@ -4,6 +4,7 @@ import com.lutavafs.linearprogramming.domain.simplex.model.SimplexProblem;
 import com.lutavafs.linearprogramming.domain.simplex.model.SimplexResult;
 import com.lutavafs.linearprogramming.exception.SimplexConvergenceException;
 import com.lutavafs.linearprogramming.solver.impl.SimplexSolver;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -18,6 +19,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Testes do controller MVC da aplicação utilizando {@link MockMvc}.
+ */
 @WebMvcTest(WebController.class)
 public class WebControllerTests {
 
@@ -28,6 +32,7 @@ public class WebControllerTests {
     private SimplexSolver solver;
 
     @Test
+    @DisplayName("Deve renderizar o resultado correto quando receber um problema de Simplex")
     void simplexSuccessTest() throws Exception {
         SimplexProblem problem = getMaxExample();
         SimplexResult result = getMaxExampleResult();
@@ -45,6 +50,7 @@ public class WebControllerTests {
     }
 
     @Test
+    @DisplayName("Deve renderizar o erro de convergência quando receber um problema de ciclo de degeneração do Simplex")
     void simplexConvergenceExceptionTest() throws Exception {
         SimplexProblem problem = getDegenerateCyclingExample();
 
@@ -59,6 +65,7 @@ public class WebControllerTests {
     }
 
     @Test
+    @DisplayName("Deve renderizar o formulário do Simplex quando acessar a rota")
     void simplexFormRenderTest() throws Exception {
         mockMvc.perform(get("/simplex"))
                 .andExpect(status().isOk())

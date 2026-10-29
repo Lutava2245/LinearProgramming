@@ -3,6 +3,8 @@ package com.lutavafs.linearprogramming.solver.impl;
 import com.lutavafs.linearprogramming.domain.simplex.model.BigMCoefficient;
 import com.lutavafs.linearprogramming.domain.simplex.model.Iteration;
 import com.lutavafs.linearprogramming.domain.simplex.model.SimplexProblem;
+
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,11 +14,15 @@ import static com.lutavafs.linearprogramming.util.SimplexAsserts.assertMatrixEqu
 import static com.lutavafs.linearprogramming.util.SimplexTestFactory.getMinExample;
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Testes unitários para a classe {@link SimplexSolver}.
+ */
 public class SimplexSolverTests {
 
     private final SimplexSolver solver = new SimplexSolver();
 
     @Test
+    @DisplayName("Deve criar o tableau quando receber o problema de minimização")
     public void createTableauTest() {
         SimplexProblem problem = getMinExample();
         solver.createTableau(problem);
@@ -34,12 +40,12 @@ public class SimplexSolverTests {
                 new BigMCoefficient(0, 0)
         };
         double[][] matrix = {
-                {0, 2, 1, 3, 1, 1, 0, 0, 0, 40},
-                {0, 1, 2, 1, 2, 0, -1, 1, 0, 20},
-                {0, 3, 0, 2, 2, 0, 0, 0, 1, 30}
+                { 0, 2, 1, 3, 1, 1, 0, 0, 0, 40 },
+                { 0, 1, 2, 1, 2, 0, -1, 1, 0, 20 },
+                { 0, 3, 0, 2, 2, 0, 0, 0, 1, 30 }
         };
-        String[] columnNames = {"-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS"};
-        int[] basicIndexes = {5, 7, 8};
+        String[] columnNames = { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" };
+        int[] basicIndexes = { 5, 7, 8 };
 
         assertArrayEquals(rowZ, problem.getTableau().getRowZ());
         assertMatrixEquals(matrix, problem.getTableau().getMatrix());
@@ -48,6 +54,7 @@ public class SimplexSolverTests {
     }
 
     @Test
+    @DisplayName("Deve resetar a linha Z do tableau quando receber o problema de minimização")
     public void resetZRowTest() {
         SimplexProblem problem = getMinExample();
         solver.createTableau(problem);
@@ -70,6 +77,7 @@ public class SimplexSolverTests {
     }
 
     @Test
+    @DisplayName("Deve encontrar a coluna pivô, a linha pivô e pivotear o tableau quando receber o problema de minimização")
     public void pivotTest() {
         SimplexProblem problem = getMinExample();
         solver.createTableau(problem);
@@ -82,18 +90,18 @@ public class SimplexSolverTests {
                 new BigMCoefficient(1, 0),
                 new BigMCoefficient(0, 0),
                 new BigMCoefficient(2, -2),
-                new BigMCoefficient(3, -1.0/3),
-                new BigMCoefficient(2, -4.0/3),
+                new BigMCoefficient(3, -1.0 / 3),
+                new BigMCoefficient(2, -4.0 / 3),
                 new BigMCoefficient(0, 0),
                 new BigMCoefficient(0, 1),
                 new BigMCoefficient(0, 0),
-                new BigMCoefficient(-1, 4.0/3),
+                new BigMCoefficient(-1, 4.0 / 3),
                 new BigMCoefficient(-30, -10)
         };
         double[][] matrix = {
-                {0, 0, 1, 5.0/3, -1.0/3, 1, 0, 0, -2.0/3, 20},
-                {0, 0, 2, 1.0/3, 4.0/3, 0, -1, 1, -1.0/3, 10},
-                {0, 1, 0, 2.0/3, 2.0/3, 0, 0, 0, 1.0/3, 10}
+                { 0, 0, 1, 5.0 / 3, -1.0 / 3, 1, 0, 0, -2.0 / 3, 20 },
+                { 0, 0, 2, 1.0 / 3, 4.0 / 3, 0, -1, 1, -1.0 / 3, 10 },
+                { 0, 1, 0, 2.0 / 3, 2.0 / 3, 0, 0, 0, 1.0 / 3, 10 }
         };
 
         assertEquals(1, problem.getTableau().getPivotColumn());
@@ -103,6 +111,7 @@ public class SimplexSolverTests {
     }
 
     @Test
+    @DisplayName("Deve iterar o tableau até encontrar a solução ótima quando receber o problema de minimização")
     public void iterateTest() {
         SimplexProblem problem = getMinExample();
         List<Iteration> iterations = new ArrayList<>();
@@ -114,29 +123,26 @@ public class SimplexSolverTests {
         List<Iteration> iterationsExpected = List.of(
                 new Iteration(
                         "Iteração",
-                        new int[] {1, 2},
-                        new String[] {"-Z", "s1", "a1", "a2"},
-                        new String[] {"-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS"},
+                        new int[] { 1, 2 },
+                        new String[] { "-Z", "s1", "a1", "a2" },
+                        new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
                         new String[][] {
-                                {"1", "3-4M", "2-2M", "5-3M", "4-4M", "0", "M", "0", "0", "-50M"},
-                                {"0", "2", "1", "3", "1", "1", "0", "0", "0", "40"},
-                                {"0", "1", "2", "1", "2", "0", "-1", "1", "0", "20"},
-                                {"0", "3", "0", "2", "2", "0", "0", "0", "1", "30"}
-                        }
-                ),
+                                { "1", "3-4M", "2-2M", "5-3M", "4-4M", "0", "M", "0", "0", "-50M" },
+                                { "0", "2", "1", "3", "1", "1", "0", "0", "0", "40" },
+                                { "0", "1", "2", "1", "2", "0", "-1", "1", "0", "20" },
+                                { "0", "3", "0", "2", "2", "0", "0", "0", "1", "30" }
+                        }),
                 new Iteration(
                         "Iteração",
-                        new int[] {2, 1},
-                        new String[] {"-Z", "s1", "a1", "x1"},
-                        new String[] {"-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS"},
+                        new int[] { 2, 1 },
+                        new String[] { "-Z", "s1", "a1", "x1" },
+                        new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
                         new String[][] {
-                                {"1", "0", "2-2M", "3-1/3M", "2-4/3M", "0", "M", "0", "-1+4/3M", "-30-10M"},
-                                {"0", "0", "1", "5/3", "-1/3", "1", "0", "0", "-2/3", "20"},
-                                {"0", "0", "2", "1/3", "4/3", "0", "-1", "1", "-1/3", "10"},
-                                {"0", "1", "0", "2/3", "2/3", "0", "0", "0", "1/3", "10"}
-                        }
-                )
-        );
+                                { "1", "0", "2-2M", "3-1/3M", "2-4/3M", "0", "M", "0", "-1+4/3M", "-30-10M" },
+                                { "0", "0", "1", "5/3", "-1/3", "1", "0", "0", "-2/3", "20" },
+                                { "0", "0", "2", "1/3", "4/3", "0", "-1", "1", "-1/3", "10" },
+                                { "0", "1", "0", "2/3", "2/3", "0", "0", "0", "1/3", "10" }
+                        }));
 
         assertIterableEquals(iterationsExpected, iterations);
     }
