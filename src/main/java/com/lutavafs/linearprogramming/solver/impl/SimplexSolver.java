@@ -13,9 +13,23 @@ import java.util.*;
 
 import static com.lutavafs.linearprogramming.util.MathFormater.formatDouble;
 
+/**
+ * Classe que realiza os cálculos do Simplex.
+ */
 @Service
 public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
+    /**
+     * Calcula o resultado do Simplex para um problema de Simplex dado.
+     * <p>
+     * O cálculo do Simplex envolve a criação do {@link Tableau} inicial, a iteração
+     * através
+     * de {@link Iteration}, e a determinação do {@link StatusResult}.
+     * </p>
+     * 
+     * @param problem problema de Simplex a ser resolvido.
+     * @return o resultado do Simplex, encapsulado em um {@link SimplexResult}.
+     */
     @Override
     public SimplexResult calculate(SimplexProblem problem) {
         List<Iteration> iterations = new ArrayList<>();
@@ -33,7 +47,21 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         return getResult(problem, iterations, status);
     }
 
-    public void createTableau(SimplexProblem problem) {
+    /**
+     * Cria o {@link Tableau} inicial para o problema de Simplex.
+     * <p>
+     * Para criar um tableau, é necessário determinar o número de variáveis de
+     * decisão, variáveis de folga e variáveis artificiais. O tableau é então
+     * preenchido com os coeficientes das restrições e da função objetivo.
+     * <p>
+     * No Simplex, o lado direito da função objetivo é definido como {@code 0}, e as
+     * variáveis de folga e artificiais são adicionadas conforme necessário para
+     * transformar as restrições em equações.
+     * </p>
+     * 
+     * @param problem problema de Simplex para o qual o tableau será criado.
+     */
+    protected void createTableau(SimplexProblem problem) {
         int numX = problem.getObjectiveFunction().length;
         int numS = 0;
         int numA = 0;
@@ -78,7 +106,10 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         rowZ[0] = new BigMCoefficient(1, 0);
         for (int i = 0; i < numX; i++) {
-            rowZ[1 + i] = new BigMCoefficient(problem.getOptimizationType() == OptimizationType.MAXIMIZATION ? -problem.getObjectiveFunction()[i] : problem.getObjectiveFunction()[i], 0);
+            rowZ[1 + i] = new BigMCoefficient(
+                    problem.getOptimizationType() == OptimizationType.MAXIMIZATION ? -problem.getObjectiveFunction()[i]
+                            : problem.getObjectiveFunction()[i],
+                    0);
         }
         for (int i = 0; i < numS; i++) {
             rowZ[1 + numX + i] = new BigMCoefficient(0, 0);
@@ -121,10 +152,19 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
                 rowZ,
                 matrix,
                 columnNames,
-                basicIndexes
-        ));
+                basicIndexes));
     }
 
+    /**
+     * Reinicia a linha Z do tableau.
+     * <p>
+     * A linha Z é recalculada subtraindo os valores das restrições correspondentes
+     * das variáveis artificiais da linha Z. Assim, a linha Z reflete corretamente o
+     * valor da função objetivo considerando as variáveis artificiais.
+     * </p>
+     * 
+     * @param tableau o tabela Simplex cuja linha Z será reiniciada.
+     */
     protected void resetZRow(Tableau tableau) {
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             if (tableau.getColumnNames()[tableau.getBasicIndexes()[i]].startsWith("a")) {
@@ -136,7 +176,23 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         }
     }
 
-    public StatusResult iterate(SimplexProblem problem, List<Iteration> iterations) {
+    /**
+     * Realiza uma iteração do método simplex.
+     * <p>
+     * O método Simplex funciona iterativamente, encontrando uma coluna pivô e uma
+     * linha pivô, e então realizando a operação de pivotamento para atualizar o
+     * tableau. O processo continua até que uma solução ótima seja encontrada ou até
+     * que seja determinado que o problema é ilimitado.
+     * </p>
+     * 
+     * @param problem    problema de Simplex a ser iterado.
+     * @param iterations lista para armazenar as iterações do processo de Simplex.
+     * @return o status do resultado após a iteração.
+     * @see Tableau#pivot()
+     * @see #findPivotColumn(Tableau)
+     * @see #findPivotRow(Tableau)
+     */
+    protected StatusResult iterate(SimplexProblem problem, List<Iteration> iterations) {
         final int MAX_ITERATIONS = 1000;
         int currentIteration = 0;
 
@@ -159,7 +215,16 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         throw new SimplexConvergenceException();
     }
 
-    public BigMCoefficient findPivotColumn(Tableau tableau) {
+    /**
+     * Encontra a coluna pivô no tableau.
+     * <p>
+     * A coluna pivô é a coluna com o menor coeficiente na linha Z.
+     * </p>
+     * 
+     * @param tableau tabela Simplex onde será encontrada a coluna pivô.
+     * @return o coeficiente da coluna pivô.
+     */
+    protected BigMCoefficient findPivotColumn(Tableau tableau) {
         BigMCoefficient lowestCoefficient = new BigMCoefficient(Double.MAX_VALUE, Double.MAX_VALUE);
         for (int i = 1; i < tableau.getRowZ().length - 1; i++) {
             BigMCoefficient coefficient = tableau.getRowZ()[i];
@@ -172,7 +237,19 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         return lowestCoefficient;
     }
 
-    public void findPivotRow(Tableau tableau) {
+    /**
+     * Encontra a linha pivô no tableau.
+     * <p>
+     * A linha pivô é determinada pelo menor resultado da divisão entre o lado
+     * direito da
+     * restrição e o valor da coluna pivô para cada linha. Se não houver uma linha
+     * válida (resultado negativo), o método define a linha como {@code -1},
+     * indicando que o problema é ilimitado.
+     * </p>
+     * 
+     * @param tableau tabela Simplex onde será encontrada a linha pivô.
+     */
+    protected void findPivotRow(Tableau tableau) {
         int pivotColumn = tableau.getPivotColumn();
         int chosenRow = -1;
         double lowest = Double.MAX_VALUE;
@@ -196,7 +273,19 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         tableau.setPivotRow(chosenRow);
     }
 
-    protected Iteration getIteration(SimplexProblem problem, String title) {
+    /**
+     * Retorna uma iteração do processo de Simplex.
+     * <p>
+     * A iteração inclui o título da iteração, os índices da coluna e linha pivô, os
+     * nomes das linhas e colunas, e a matriz do tableau.
+     * </p>
+     * 
+     * @param problem problema de Simplex para o qual a iteração será retornada.
+     * @param title   título da iteração ("Inicial", "Iteração", "Final").
+     * @return uma instância de {@link Iteration} representando a iteração atual do
+     *         processo de Simplex.
+     */
+    private Iteration getIteration(SimplexProblem problem, String title) {
         Tableau tableau = problem.getTableau();
 
         String[] rowNames = new String[tableau.getMatrix().length + 1];
@@ -219,32 +308,51 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         return new Iteration(
                 title,
-                title.equals("Final") ? new int[] {-1, -1} : new int[] {tableau.getPivotColumn(), tableau.getPivotRow()},
+                title.equals("Final") ? new int[] { -1, -1 }
+                        : new int[] { tableau.getPivotColumn(), tableau.getPivotRow() },
                 rowNames,
                 tableau.getColumnNames(),
-                matrix
-        );
+                matrix);
     }
 
-    public SimplexResult getResult(SimplexProblem problem, List<Iteration> iterations, StatusResult status) {
+    /**
+     * Retorna o resultado do processo de Simplex.
+     * <p>
+     * O resultado inclui o status do resultado, o valor da função objetivo,
+     * e os valores das variáveis de decisão. Se o problema for ilimitado, o valor
+     * da função objetivo será {@code NA}. Se o problema for inviável, o valor da
+     * função
+     * objetivo será {@code 0}.
+     * </p>
+     * 
+     * @param problem    problema de Simplex para o qual o resultado será retornado.
+     * @param iterations lista de iterações do processo de Simplex.
+     * @param status     status do resultado do processo de Simplex.
+     * @return uma instância de {@link SimplexResult} representando os dados finais
+     *         do
+     *         processo de Simplex.
+     */
+    private SimplexResult getResult(SimplexProblem problem, List<Iteration> iterations, StatusResult status) {
         Tableau tableau = problem.getTableau();
         final int rightHandColumn = tableau.getColumnNames().length - 1;
         Map<String, String> variableValues = getVariableValues(tableau);
 
         if (status == StatusResult.UNBOUNDED) {
-            return new SimplexResult(iterations, status.getTitle(), problem.getOptimizationType().getTitle(), "NA", variableValues);
+            return new SimplexResult(iterations, status.getTitle(), problem.getOptimizationType().getTitle(), "NA",
+                    variableValues);
         }
 
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             String variableName = tableau.getColumnNames()[tableau.getBasicIndexes()[i]];
 
             if (variableName.startsWith("a") && tableau.getMatrix()[i][rightHandColumn] > 1e-6) {
-                return new SimplexResult(iterations, StatusResult.INFEASIBLE.getTitle(), problem.getOptimizationType().getTitle(), formatDouble(0), variableValues);
+                return new SimplexResult(iterations, StatusResult.INFEASIBLE.getTitle(),
+                        problem.getOptimizationType().getTitle(), formatDouble(0), variableValues);
             }
         }
 
         for (int j = 1; j < rightHandColumn; j++) {
-            if (tableau.getColumnNames()[j].startsWith("x") && !isBasic(tableau, j)) {
+            if (tableau.getColumnNames()[j].startsWith("x") && !tableau.isBasic(j)) {
                 BigMCoefficient coefficient = tableau.getRowZ()[j];
                 if (Math.abs(coefficient.bigM()) < 1e-6 && Math.abs(coefficient.value()) < 1e-6) {
                     status = StatusResult.MULTIPLE_OPTIMAL;
@@ -262,10 +370,20 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
                 status.getTitle(),
                 problem.getOptimizationType().getTitle(),
                 formatDouble(objectiveValue),
-                variableValues
-        );
+                variableValues);
     }
 
+    /**
+     * Retorna os valores das variáveis de decisão.
+     * <p>
+     * Os valores das variáveis são obtidos a partir da tabela Simplex.
+     * {@code x} representa as variáveis de decisão, {@code s} representa as
+     * variáveis de folga, e {@code a} representa as variáveis artificiais.
+     * </p>
+     * 
+     * @param tableau tabela Simplex contendo os dados do problema.
+     * @return um mapa com os nomes e valores das variáveis de decisão.
+     */
     private @NonNull Map<String, String> getVariableValues(Tableau tableau) {
         Map<String, String> variableValues = new TreeMap<>();
 
@@ -275,28 +393,25 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             int basicColumn = tableau.getBasicIndexes()[i];
-            variableValues.put(tableau.getColumnNames()[basicColumn], formatDouble(tableau.getMatrix()[i][tableau.getColumnNames().length - 1]));
+            variableValues.put(tableau.getColumnNames()[basicColumn],
+                    formatDouble(tableau.getMatrix()[i][tableau.getColumnNames().length - 1]));
         }
 
         Map<String, String> sortedVariables = new LinkedHashMap<>();
 
         variableValues.forEach((key, value) -> {
-            if (key.startsWith("x")) sortedVariables.put(key, value);
+            if (key.startsWith("x"))
+                sortedVariables.put(key, value);
         });
         variableValues.forEach((key, value) -> {
-            if (key.startsWith("s")) sortedVariables.put(key, value);
+            if (key.startsWith("s"))
+                sortedVariables.put(key, value);
         });
         variableValues.forEach((key, value) -> {
-            if (key.startsWith("a")) sortedVariables.put(key, value);
+            if (key.startsWith("a"))
+                sortedVariables.put(key, value);
         });
 
         return sortedVariables;
-    }
-
-    private boolean isBasic(Tableau tableau, int index) {
-        for (int basicIdx : tableau.getBasicIndexes()) {
-            if (basicIdx == index) return true;
-        }
-        return false;
     }
 }
