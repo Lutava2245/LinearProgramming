@@ -1,7 +1,7 @@
 package com.lutavafs.linearprogramming.domain.simplex.model;
 
 import com.lutavafs.linearprogramming.domain.simplex.enums.ConstraintType;
-import com.lutavafs.linearprogramming.util.MathFormater;
+import com.lutavafs.linearprogramming.util.MathHelper;
 import jakarta.annotation.Nonnull;
 
 import java.util.Objects;
@@ -58,7 +58,7 @@ public record BigMCoefficient(double value, double bigM) {
      *         {@code 1} se o valor do atual for maior que o valor do recebido.
      */
     public int compareTo(BigMCoefficient coefficient) {
-        if (Math.abs(this.bigM - coefficient.bigM) > 1e-9) {
+        if (Math.abs(this.bigM - coefficient.bigM) > MathHelper.EPSILON) {
             return Double.compare(this.bigM, coefficient.bigM);
         }
         return Double.compare(this.value, coefficient.value);
@@ -71,20 +71,21 @@ public record BigMCoefficient(double value, double bigM) {
         if (o == null || getClass() != o.getClass())
             return false;
         BigMCoefficient coefficient = (BigMCoefficient) o;
-        return Math.abs(this.bigM - coefficient.bigM) < 1e-9 && Math.abs(this.value - coefficient.value) < 1e-9;
+        return Math.abs(this.bigM - coefficient.bigM) < MathHelper.EPSILON
+                && Math.abs(this.value - coefficient.value) < MathHelper.EPSILON;
     }
 
     @Override
     public int hashCode() {
-        double valArredondado = Math.round(this.value / 1e-9) * 1e-9;
-        double mArredondado = Math.round(this.bigM / 1e-9) * 1e-9;
-        return Objects.hash(valArredondado, mArredondado);
+        double roundedValue = Math.round(this.value / MathHelper.EPSILON) * MathHelper.EPSILON;
+        double roundedBigM = Math.round(this.bigM / MathHelper.EPSILON) * MathHelper.EPSILON;
+        return Objects.hash(roundedValue, roundedBigM);
     }
 
     @Override
     public @Nonnull String toString() {
-        String valueString = MathFormater.formatDouble(value);
-        String bigMString = MathFormater.formatDouble(bigM);
+        String valueString = MathHelper.formatDouble(value);
+        String bigMString = MathHelper.formatDouble(bigM);
 
         if (valueString.equals("0") && bigMString.equals("0")) {
             return "0";

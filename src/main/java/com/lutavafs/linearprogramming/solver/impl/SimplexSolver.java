@@ -6,12 +6,11 @@ import com.lutavafs.linearprogramming.domain.simplex.enums.StatusResult;
 import com.lutavafs.linearprogramming.domain.simplex.model.*;
 import com.lutavafs.linearprogramming.exception.SimplexConvergenceException;
 import com.lutavafs.linearprogramming.solver.Solver;
+import com.lutavafs.linearprogramming.util.MathHelper;
 import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
-import static com.lutavafs.linearprogramming.util.MathFormater.formatDouble;
 
 /**
  * Classe que realiza os cálculos do Simplex.
@@ -256,9 +255,9 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         for (int i = 0; i < tableau.getMatrix().length; i++) {
             double columnValue = tableau.getMatrix()[i][pivotColumn];
-            if (columnValue > 1e-9) {
+            if (columnValue > MathHelper.EPSILON) {
                 double rightHandValue = tableau.getMatrix()[i][tableau.getMatrix()[i].length - 1];
-                if (Math.abs(rightHandValue) < 1e-9) {
+                if (Math.abs(rightHandValue) < MathHelper.EPSILON) {
                     rightHandValue = 0.0;
                 }
 
@@ -297,7 +296,7 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         for (int i = 0; i < matrix.length - 1; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                matrix[i + 1][j] = (formatDouble(tableau.getMatrix()[i][j]));
+                matrix[i + 1][j] = (MathHelper.formatDouble(tableau.getMatrix()[i][j]));
             }
         }
 
@@ -345,16 +344,17 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             String variableName = tableau.getColumnNames()[tableau.getBasicIndexes()[i]];
 
-            if (variableName.startsWith("a") && tableau.getMatrix()[i][rightHandColumn] > 1e-6) {
+            if (variableName.startsWith("a") && tableau.getMatrix()[i][rightHandColumn] > MathHelper.EPSILON) {
                 return new SimplexResult(iterations, StatusResult.INFEASIBLE.getTitle(),
-                        problem.getOptimizationType().getTitle(), formatDouble(0), variableValues);
+                        problem.getOptimizationType().getTitle(), MathHelper.formatDouble(0), variableValues);
             }
         }
 
         for (int j = 1; j < rightHandColumn; j++) {
             if (tableau.getColumnNames()[j].startsWith("x") && !tableau.isBasic(j)) {
                 BigMCoefficient coefficient = tableau.getRowZ()[j];
-                if (Math.abs(coefficient.bigM()) < 1e-6 && Math.abs(coefficient.value()) < 1e-6) {
+                if (Math.abs(coefficient.bigM()) < MathHelper.EPSILON
+                        && Math.abs(coefficient.value()) < MathHelper.EPSILON) {
                     status = StatusResult.MULTIPLE_OPTIMAL;
                     break;
                 }
@@ -369,7 +369,7 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
                 iterations,
                 status.getTitle(),
                 problem.getOptimizationType().getTitle(),
-                formatDouble(objectiveValue),
+                MathHelper.formatDouble(objectiveValue),
                 variableValues);
     }
 
@@ -394,7 +394,7 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {
             int basicColumn = tableau.getBasicIndexes()[i];
             variableValues.put(tableau.getColumnNames()[basicColumn],
-                    formatDouble(tableau.getMatrix()[i][tableau.getColumnNames().length - 1]));
+                    MathHelper.formatDouble(tableau.getMatrix()[i][tableau.getColumnNames().length - 1]));
         }
 
         Map<String, String> sortedVariables = new LinkedHashMap<>();

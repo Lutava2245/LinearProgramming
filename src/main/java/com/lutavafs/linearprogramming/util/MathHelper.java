@@ -3,8 +3,8 @@ package com.lutavafs.linearprogramming.util;
 /**
  * Utilitário para formatação e cálculos com dados numéricos.
  */
-public class MathFormater {
-    private static final double EPSILON = 1e-9;
+public class MathHelper {
+    public static final double EPSILON = 1e-9;
 
     /**
      * Formata um número do tipo {@code double} para um {@code String} formatado.
@@ -16,7 +16,7 @@ public class MathFormater {
         if (Double.isNaN(valor) || Double.isInfinite(valor))
             return String.valueOf(valor);
 
-        if (Math.abs(valor) < 1e-9) {
+        if (Math.abs(valor) < EPSILON) {
             return "0";
         }
 
@@ -41,7 +41,8 @@ public class MathFormater {
      * @param a primeiro valor numérico.
      * @param b segundo valor numérico.
      * @return valor de {@code a} se {@code b == 0},
-     *         caso contrário retorna a função recursiva com {@code b} e {@code a % b}.
+     *         caso contrário retorna a função recursiva com {@code b} e
+     *         {@code a % b}.
      */
     private static long greatestCommonDivisor(long a, long b) {
         return b == 0 ? Math.abs(a) : greatestCommonDivisor(b, a % b);
