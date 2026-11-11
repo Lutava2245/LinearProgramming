@@ -41,7 +41,7 @@ public class WebControllerTests {
                 .thenReturn(result);
 
         mockMvc.perform(post("/simplex/calculate")
-                        .flashAttr("simplexProblem", problem))
+                .flashAttr("simplexProblem", problem))
                 .andExpect(status().isOk())
                 .andExpect(view().name("simplex-result"))
                 .andExpect(model().attributeExists("simplexResult"))
@@ -58,7 +58,7 @@ public class WebControllerTests {
                 .thenThrow(new SimplexConvergenceException());
 
         mockMvc.perform(post("/simplex/calculate")
-                        .flashAttr("simplexProblem", problem))
+                .flashAttr("simplexProblem", problem))
                 .andExpect(status().isOk())
                 .andExpect(view().name("simplex-result"))
                 .andExpect(model().attributeExists("errorMessage"));
@@ -71,5 +71,26 @@ public class WebControllerTests {
                 .andExpect(status().isOk())
                 .andExpect(view().name("simplex"))
                 .andExpect(model().attributeExists("simplexProblem"));
+    }
+
+    @Test
+    @DisplayName("Deve fazer corretamente o Data Binding e renderizar a paǵina quando receber dados do formulário")
+    void dataBindingTest() throws Exception {
+        SimplexResult result = getMaxExampleResult();
+
+        when(solver.calculate(any(SimplexProblem.class))).thenReturn(result);
+
+        mockMvc.perform(post("/simplex/calculate")
+                .param("optimizationType", "MAXIMIZATION")
+                .param("objectiveFunction[0]", "3.0")
+                .param("objectiveFunction[1]", "5.0")
+                .param("constraints[0].coefficients[0]", "1.0")
+                .param("constraints[0].coefficients[1]", "2.0")
+                .param("constraints[0].constraintType", "LESS_EQUAL")
+                .param("constraints[0].rightHandValue", "8.0"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("simplex-result"))
+                .andExpect(model().attributeExists("simplexResult"))
+                .andExpect(model().attribute("simplexResult", result));
     }
 }

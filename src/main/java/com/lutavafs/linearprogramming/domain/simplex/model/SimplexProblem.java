@@ -1,6 +1,8 @@
 package com.lutavafs.linearprogramming.domain.simplex.model;
 
 import com.lutavafs.linearprogramming.domain.simplex.enums.OptimizationType;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -28,6 +30,7 @@ public class SimplexProblem {
      * Tipo de otimização do problema.
      */
     @NonNull
+    @NotNull
     private OptimizationType optimizationType;
 
     /**
@@ -39,11 +42,15 @@ public class SimplexProblem {
      * <p>
      */
     @NonNull
+    @NotNull
+    @NotEmpty
     private Double[] objectiveFunction;
 
     /**
      * Restrições do problema.
      */
+    @NotNull
+    @NotEmpty
     @NonNull
     private List<Constraint> constraints;
 

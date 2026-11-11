@@ -4,9 +4,11 @@ import com.lutavafs.linearprogramming.domain.simplex.model.SimplexProblem;
 import com.lutavafs.linearprogramming.domain.simplex.model.SimplexResult;
 import com.lutavafs.linearprogramming.solver.Solver;
 import com.lutavafs.linearprogramming.solver.impl.SimplexSolver;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,7 +57,13 @@ public class WebController {
      * @return o template HTML contendo o resultado do Simplex.
      */
     @PostMapping("/simplex/calculate")
-    public String simplexCalculate(@ModelAttribute("simplexProblem") SimplexProblem problem, Model model) {
+    public String simplexCalculate(@Valid @ModelAttribute("simplexProblem") SimplexProblem problem,
+            BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("errorMessage", "Dados inválidos enviados no formulário. Verifique os campos.");
+            return "simplex";
+        }
+
         SimplexResult result = simplexSolver.calculate(problem);
 
         model.addAttribute("simplexResult", result);
