@@ -32,7 +32,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(SimplexConvergenceException.class)
     public String handleSimplexConvergence(SimplexConvergenceException ex, Model model) {
         SimplexResult errorResult = new SimplexResult(
-                Collections.emptyList(),
+                ex.getIterations(),
                 StatusResult.DEGENERATE_CYCLING.getTitle(),
                 "-",
                 "NA",

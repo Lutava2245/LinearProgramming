@@ -11,6 +11,8 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Collections;
+
 import static com.lutavafs.linearprogramming.util.SimplexTestFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -55,7 +57,7 @@ public class WebControllerTests {
         SimplexProblem problem = getDegenerateCyclingExample();
 
         when(solver.calculate(any(SimplexProblem.class)))
-                .thenThrow(new SimplexConvergenceException());
+                .thenThrow(new SimplexConvergenceException(Collections.emptyList()));
 
         mockMvc.perform(post("/simplex/calculate")
                 .flashAttr("simplexProblem", problem))

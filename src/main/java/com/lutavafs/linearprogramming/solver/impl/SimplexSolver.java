@@ -212,7 +212,7 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
             currentIteration++;
         }
 
-        throw new SimplexConvergenceException();
+        throw new SimplexConvergenceException(iterations);
     }
 
     /**
