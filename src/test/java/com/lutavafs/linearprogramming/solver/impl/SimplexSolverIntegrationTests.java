@@ -89,4 +89,23 @@ public class SimplexSolverIntegrationTests {
     public void degenerateCyclingSimplexTest() {
         assertThrows(SimplexConvergenceException.class, () -> solver.calculate(getDegenerateCyclingExample()));
     }
+
+    @Test
+    @DisplayName("Deve inverter restrição com RHS negativo e encontrar a solução ótima quando receber o problema com RHS negativo")
+    public void negativeRhsSimplexTest() {
+        SimplexResult result = solver.calculate(getNegativeRhsExample());
+
+        assertNotNull(result);
+        assertEquals("Solução ótima", result.getStatus());
+        assertEquals("2", result.getVariableValues().get("x1"));
+    }
+
+    @Test
+    @DisplayName("Deve definir a solução como inviável quando receber um problema com solução ilimitada falsa")
+    public void falseUnboundedSimplexTest() {
+        SimplexResult result = solver.calculate(getFalseUnboundedExample());
+
+        assertNotNull(result);
+        assertEquals("Inviável", result.getStatus());
+    }
 }

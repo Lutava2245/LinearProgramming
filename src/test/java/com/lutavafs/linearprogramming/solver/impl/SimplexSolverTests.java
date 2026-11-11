@@ -122,7 +122,7 @@ public class SimplexSolverTests {
 
         List<Iteration> iterationsExpected = List.of(
                 new Iteration(
-                        "Iteração",
+                        "Iteração 1",
                         new int[] { 1, 2 },
                         new String[] { "-Z", "s1", "a1", "a2" },
                         new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -133,7 +133,7 @@ public class SimplexSolverTests {
                                 { "0", "3", "0", "2", "2", "0", "0", "0", "1", "30" }
                         }),
                 new Iteration(
-                        "Iteração",
+                        "Iteração 2",
                         new int[] { 2, 1 },
                         new String[] { "-Z", "s1", "a1", "x1" },
                         new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },

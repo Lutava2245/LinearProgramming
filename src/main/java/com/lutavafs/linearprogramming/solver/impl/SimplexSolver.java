@@ -17,6 +17,7 @@ import java.util.*;
  */
 @Service
 public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
+    private static final int MAX_ITERATIONS = 1000;
 
     /**
      * Calcula o resultado do Simplex para um problema de Simplex dado.
@@ -34,9 +35,9 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         List<Iteration> iterations = new ArrayList<>();
 
         createTableau(problem);
+        iterations.add(getIteration(problem, "Inicial"));
 
         if (problem.getTableau().haveArtificialVariables()) {
-            iterations.add(getIteration(problem, "Inicial"));
             resetZRow(problem.getTableau());
         }
 
@@ -66,7 +67,12 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         int numA = 0;
 
         for (Constraint c : problem.getConstraints()) {
-            switch (c.getConstraintType()) {
+            ConstraintType type = c.getConstraintType();
+            if (c.getRightHandValue() < 0) {
+                type = flip(type);
+            }
+
+            switch (type) {
                 case LESS_EQUAL:
                     numS++;
                     break;
@@ -123,28 +129,40 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
 
         for (int i = 0; i < problem.getConstraints().size(); i++) {
             Constraint c = problem.getConstraints().get(i);
+            double[] coefficients = c.getCoefficients();
+            ConstraintType type = c.getConstraintType();
+            double rhs = c.getRightHandValue();
+
+            if (rhs < 0) {
+                coefficients = new double[c.getCoefficients().length];
+                for (int j = 0; j < c.getCoefficients().length; j++) {
+                    coefficients[j] = -c.getCoefficients()[j];
+                }
+                type = flip(type);
+                rhs = -c.getRightHandValue();
+            }
 
             matrix[i][0] = 0.0;
 
-            System.arraycopy(c.getCoefficients(), 0, matrix[i], 1, numX);
+            System.arraycopy(coefficients, 0, matrix[i], 1, numX);
 
-            if (c.getConstraintType() == ConstraintType.LESS_EQUAL) {
+            if (type == ConstraintType.LESS_EQUAL) {
                 matrix[i][sIdx] = 1.0;
                 basicIndexes[i] = sIdx;
                 sIdx++;
-            } else if (c.getConstraintType() == ConstraintType.GREATER_EQUAL) {
+            } else if (type == ConstraintType.GREATER_EQUAL) {
                 matrix[i][sIdx] = -1.0;
                 matrix[i][aIdx] = 1.0;
                 basicIndexes[i] = aIdx;
                 sIdx++;
                 aIdx++;
-            } else if (c.getConstraintType() == ConstraintType.EQUAL) {
+            } else if (type == ConstraintType.EQUAL) {
                 matrix[i][aIdx] = 1.0;
                 basicIndexes[i] = aIdx;
                 aIdx++;
             }
 
-            matrix[i][totalColumns - 1] = c.getRightHandValue();
+            matrix[i][totalColumns - 1] = rhs;
         }
 
         problem.setTableau(new Tableau(
@@ -152,6 +170,14 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
                 matrix,
                 columnNames,
                 basicIndexes));
+    }
+
+    private ConstraintType flip(ConstraintType type) {
+        return switch (type) {
+            case LESS_EQUAL -> ConstraintType.GREATER_EQUAL;
+            case GREATER_EQUAL -> ConstraintType.LESS_EQUAL;
+            case EQUAL -> ConstraintType.EQUAL;
+        };
     }
 
     /**
@@ -192,23 +218,35 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
      * @see #findPivotRow(Tableau)
      */
     protected StatusResult iterate(SimplexProblem problem, List<Iteration> iterations) {
-        final int MAX_ITERATIONS = 1000;
         int currentIteration = 0;
 
         while (currentIteration < MAX_ITERATIONS) {
             BigMCoefficient lowestCoefficient = findPivotColumn(problem.getTableau());
 
-            if (lowestCoefficient.bigM() >= 0 && lowestCoefficient.value() >= 0)
+            if (!lowestCoefficient.isStrictlyNegative())
                 return StatusResult.OPTIMAL;
 
             findPivotRow(problem.getTableau());
+
             if (problem.getTableau().getPivotRow() == -1) {
+                final int rightHandColumn = problem.getTableau().getColumnNames().length - 1;
+
+                for (int i = 0; i < problem.getTableau().getBasicIndexes().length; i++) {
+                    String variableName = problem.getTableau()
+                            .getColumnNames()[problem.getTableau().getBasicIndexes()[i]];
+
+                    if (variableName.startsWith("a")
+                            && problem.getTableau().getMatrix()[i][rightHandColumn] > MathHelper.EPSILON) {
+                        return StatusResult.INFEASIBLE;
+                    }
+                }
+
                 return StatusResult.UNBOUNDED;
             }
 
-            iterations.add(getIteration(problem, "Iteração"));
-            problem.getTableau().pivot();
             currentIteration++;
+            iterations.add(getIteration(problem, "Iteração " + currentIteration));
+            problem.getTableau().pivot();
         }
 
         throw new SimplexConvergenceException(iterations);
@@ -227,9 +265,11 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
         BigMCoefficient lowestCoefficient = new BigMCoefficient(Double.MAX_VALUE, Double.MAX_VALUE);
         for (int i = 1; i < tableau.getRowZ().length - 1; i++) {
             BigMCoefficient coefficient = tableau.getRowZ()[i];
-            if (lowestCoefficient.compareTo(coefficient) > 0) {
-                lowestCoefficient = coefficient;
-                tableau.setPivotColumn(i);
+            if (coefficient.isStrictlyNegative()) {
+                if (lowestCoefficient.compareTo(coefficient) > 0) {
+                    lowestCoefficient = coefficient;
+                    tableau.setPivotColumn(i);
+                }
             }
         }
 
@@ -385,7 +425,22 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
      * @return um mapa com os nomes e valores das variáveis de decisão.
      */
     private @NonNull Map<String, String> getVariableValues(Tableau tableau) {
-        Map<String, String> variableValues = new TreeMap<>();
+        Map<String, String> variableValues = new TreeMap<>((v1, v2) -> {
+            String prefix1 = v1.replaceAll("\\d+", "");
+            String prefix2 = v2.replaceAll("\\d+", "");
+
+            if (!prefix1.equals(prefix2)) {
+                return prefix1.compareTo(prefix2);
+            }
+
+            try {
+                int num1 = Integer.parseInt(v1.replaceAll("\\D+", ""));
+                int num2 = Integer.parseInt(v2.replaceAll("\\D+", ""));
+                return Integer.compare(num1, num2);
+            } catch (NumberFormatException e) {
+                return v1.compareTo(v2);
+            }
+        });
 
         for (int j = 1; j < tableau.getColumnNames().length - 1; j++) {
             variableValues.put(tableau.getColumnNames()[j], "0");

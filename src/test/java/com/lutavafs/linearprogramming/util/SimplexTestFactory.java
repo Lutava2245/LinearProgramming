@@ -58,7 +58,7 @@ public class SimplexTestFactory {
                                         { "0", "1", "2", "0", "1", "0", "0", "0", "1", "15" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 1",
                                 new int[] { 4, 1 },
                                 new String[] { "Z", "s1", "a1", "a2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -69,7 +69,7 @@ public class SimplexTestFactory {
                                         { "0", "1", "2", "0", "1", "0", "0", "0", "1", "15" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 2",
                                 new int[] { 2, 2 },
                                 new String[] { "Z", "s1", "x4", "a2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -80,7 +80,7 @@ public class SimplexTestFactory {
                                         { "0", "1/2", "7/4", "-3/4", "0", "0", "1/4", "-1/4", "1", "9" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 3",
                                 new int[] { 1, 1 },
                                 new String[] { "Z", "s1", "x4", "x2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -91,7 +91,7 @@ public class SimplexTestFactory {
                                         { "0", "2/7", "1", "-3/7", "0", "0", "1/7", "-1/7", "4/7", "36/7" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 4",
                                 new int[] { 6, 2 },
                                 new String[] { "Z", "s1", "x1", "x2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -102,7 +102,7 @@ public class SimplexTestFactory {
                                         { "0", "0", "1", "-1", "-2/3", "0", "1/3", "-1/3", "2/3", "2" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 5",
                                 new int[] { 3, 0 },
                                 new String[] { "Z", "s1", "x1", "s2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -113,7 +113,7 @@ public class SimplexTestFactory {
                                         { "0", "0", "3", "-3", "-2", "0", "1", "-1", "2", "6" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 6",
                                 new int[] { 4, 1 },
                                 new String[] { "Z", "x3", "x1", "s2" },
                                 new String[] { "Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -187,7 +187,7 @@ public class SimplexTestFactory {
                                         { "0", "3", "0", "2", "2", "0", "0", "0", "1", "30" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 1",
                                 new int[] { 1, 2 },
                                 new String[] { "-Z", "s1", "a1", "a2" },
                                 new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -198,7 +198,7 @@ public class SimplexTestFactory {
                                         { "0", "3", "0", "2", "2", "0", "0", "0", "1", "30" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 2",
                                 new int[] { 2, 1 },
                                 new String[] { "-Z", "s1", "a1", "x1" },
                                 new String[] { "-Z", "x1", "x2", "x3", "x4", "s1", "s2", "a1", "a2", "RHS" },
@@ -262,7 +262,17 @@ public class SimplexTestFactory {
         return new SimplexResult(
                 List.of(
                         new Iteration(
-                                "Iteração",
+                                "Inicial",
+                                new int[] {-1, -1},
+                                new String[] { "Z", "s1", "s2"},
+                                new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
+                                new String[][] {
+                                        { "1", "-2", "-4", "0", "0", "0" },
+                                        { "0", "1", "2", "1", "0", "10" },
+                                        { "0", "1", "1", "0", "1", "6" }
+                                }),
+                        new Iteration(
+                                "Iteração 1",
                                 new int[] { 2, 0 },
                                 new String[] { "Z", "s1", "s2" },
                                 new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
@@ -328,7 +338,7 @@ public class SimplexTestFactory {
                                         { "0", "1", "1", "0", "-1", "1", "10" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 1",
                                 new int[] { 1, 0 },
                                 new String[] { "Z", "s1", "a1" },
                                 new String[] { "Z", "x1", "x2", "s1", "s2", "a1", "RHS" },
@@ -385,7 +395,17 @@ public class SimplexTestFactory {
         return new SimplexResult(
                 List.of(
                         new Iteration(
-                                "Iteração",
+                                "Inicial",
+                                new int[] { -1, -1 },
+                                new String[] { "Z", "s1", "s2" },
+                                new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
+                                new String[][] {
+                                        { "1", "-2", "-1", "0", "0", "0" },
+                                        { "0", "1", "-1", "1", "0", "10" },
+                                        { "0", "2", "-1", "0", "1", "40" }
+                                }),
+                        new Iteration(
+                                "Iteração 1",
                                 new int[] { 1, 0 },
                                 new String[] { "Z", "s1", "s2" },
                                 new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
@@ -395,7 +415,7 @@ public class SimplexTestFactory {
                                         { "0", "2", "-1", "0", "1", "40" }
                                 }),
                         new Iteration(
-                                "Iteração",
+                                "Iteração 2",
                                 new int[] { 2, 1 },
                                 new String[] { "Z", "x1", "s2" },
                                 new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
@@ -441,6 +461,31 @@ public class SimplexTestFactory {
                         new Constraint(new double[] { 0.5, -5.5, -2.5, 9.0 }, ConstraintType.LESS_EQUAL, 0.0),
                         new Constraint(new double[] { 0.5, -1.5, -0.5, 1.0 }, ConstraintType.LESS_EQUAL, 0.0),
                         new Constraint(new double[] { 1.0, 0.0, 0.0, 0.0 }, ConstraintType.LESS_EQUAL, 1.0)));
+        return problem;
+    }
+
+    public static @NonNull SimplexProblem getNegativeRhsExample() {
+        SimplexProblem problem = new SimplexProblem();
+        problem.setOptimizationType(OptimizationType.MINIMIZATION);
+
+        problem.setObjectiveFunction(new Double[]{1.0});
+
+        problem.setConstraints(
+                List.of(
+                        new Constraint(new double[]{-1.0}, ConstraintType.LESS_EQUAL, -2.0)));
+        return problem;
+    }
+
+    public static @NonNull SimplexProblem getFalseUnboundedExample() {
+        SimplexProblem problem = new SimplexProblem();
+        problem.setOptimizationType(OptimizationType.MAXIMIZATION);
+
+        problem.setObjectiveFunction(new Double[] { 1.0, 0.0 });
+
+        problem.setConstraints(
+                List.of(
+                        new Constraint(new double[]{0.0, 1.0}, ConstraintType.LESS_EQUAL, 1),
+                        new Constraint(new double[]{0.0, 1.0}, ConstraintType.GREATER_EQUAL, 2)));
         return problem;
     }
 }

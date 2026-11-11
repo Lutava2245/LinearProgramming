@@ -64,6 +64,12 @@ public record BigMCoefficient(double value, double bigM) {
         return Double.compare(this.value, coefficient.value);
     }
 
+    public boolean isStrictlyNegative() {
+        if (bigM < -MathHelper.EPSILON)
+            return true;
+        return Math.abs(bigM) <= MathHelper.EPSILON && value < -MathHelper.EPSILON;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
