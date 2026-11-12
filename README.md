@@ -21,7 +21,7 @@ de resolução.
 
 ## 🧮 Algoritmos Suportados
 
-* **Simplex:** Algoritmo para resolver problemas de programação linear com o Método Simplex.
+* **Simplex:** Algoritmo para resolver problemas de programação linear com o Método Simplex. Para mais informações, leia o [Guia do Simplex](docs/simplex.md).
 * **Transporte:** [Em desenvolvimento].
 
 ---
