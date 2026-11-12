@@ -264,8 +264,8 @@ public class SimplexTestFactory {
                 List.of(
                         new Iteration(
                                 "Inicial",
-                                new int[] {-1, -1},
-                                new String[] { "Z", "s1", "s2"},
+                                new int[] { -1, -1 },
+                                new String[] { "Z", "s1", "s2" },
                                 new String[] { "Z", "x1", "x2", "s1", "s2", "RHS" },
                                 new String[][] {
                                         { "1", "-2", "-4", "0", "0", "0" },
@@ -469,11 +469,13 @@ public class SimplexTestFactory {
         SimplexProblem problem = new SimplexProblem();
         problem.setOptimizationType(OptimizationType.MINIMIZATION);
 
-        problem.setObjectiveFunction(new Double[]{1.0});
+        problem.setObjectiveFunction(new Double[] { 1.0, 1.0, 1.0 });
 
         problem.setConstraints(
                 List.of(
-                        new Constraint(new double[]{-1.0}, ConstraintType.LESS_EQUAL, -2.0)));
+                        new Constraint(new double[] { -1.0, 0.0, 0.0 }, ConstraintType.LESS_EQUAL, -2.0),
+                        new Constraint(new double[] { 0.0, -1.0, 0.0 }, ConstraintType.EQUAL, -1.0),
+                        new Constraint(new double[] { 0.0, 0.0, -1.0 }, ConstraintType.GREATER_EQUAL, -4.0)));
         return problem;
     }
 
@@ -485,8 +487,8 @@ public class SimplexTestFactory {
 
         problem.setConstraints(
                 List.of(
-                        new Constraint(new double[]{0.0, 1.0}, ConstraintType.LESS_EQUAL, 1),
-                        new Constraint(new double[]{0.0, 1.0}, ConstraintType.GREATER_EQUAL, 2)));
+                        new Constraint(new double[] { 0.0, 1.0 }, ConstraintType.LESS_EQUAL, 1),
+                        new Constraint(new double[] { 0.0, 1.0 }, ConstraintType.GREATER_EQUAL, 2)));
         return problem;
     }
 }

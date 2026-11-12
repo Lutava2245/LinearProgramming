@@ -98,6 +98,9 @@ public class SimplexSolverIntegrationTests {
         assertNotNull(result);
         assertEquals("Solução ótima", result.getStatus());
         assertEquals("2", result.getVariableValues().get("x1"));
+        assertEquals("1", result.getVariableValues().get("x2"));
+        assertEquals("0", result.getVariableValues().get("x3"));
+        assertEquals("3", result.getObjectiveValue());
     }
 
     @Test
