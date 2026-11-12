@@ -8,16 +8,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 /**
- * Representa a estrutura de matriz que organiza os dados do problema
- * de Simplex.
+ * Representa a estrutura de matriz que organiza os dados do problema de
+ * Programação Linear no Método Simplex.
  * <p>
- * As linhas representam a função objetivo e as restrições do problema;
- * as colunas representam as variáveis básicas {@code x}, não-básicas
- * {@code s} e artificiais {@code a}.
+ * As linhas representam a função objetivo e as restrições do problema.
+ * As colunas são divididas em:
+ * <ul>
+ * <li>{@code Z} ou {@code -Z}: Coluna de controle da função objetivo.</li>
+ * <li>{@code x}: Variáveis de decisão.</li>
+ * <li>{@code s}: Variáveis de folga ou excesso.</li>
+ * <li>{@code a}: Variáveis artificiais.</li>
+ * <li>{@code RHS}: Coluna do lado direito (Right Hand-Side) com as constantes
+ * das restrições.</li>
+ * </ul>
  * <p>
- * A primeira coluna do Tableau é a variávei que representa o objetivo
- * {@code Z} ou {@code -Z}; a última coluna representa as constantes do
- * lado direito (Right Hand-Side).
+ * O estado de cada variável (se pertence à base ou não) muda dinamicamente a
+ * cada pivoteamento.
  */
 @RequiredArgsConstructor
 @Getter
@@ -71,12 +77,14 @@ public class Tableau {
     }
 
     /**
-     * Verifica se uma coluna é básica no tableau.
+     * Verifica se uma coluna do Tableau pertence à base atual.
      * <p>
-     * Uma coluna é considerada básica se ela corresponde às variáveis que estão
-     * atualmente na solução básica, ou seja, aquelas que têm um valor diferente de
-     * zero na solução atual.
-     * </p>
+     * Uma coluna é considerada básica se ela representa uma variável que está
+     * atualmente na base (formando um vetor unitário na matriz).
+     * <p>
+     * <b>Nota:</b> Variáveis básicas podem assumir valor zero na solução (estado de
+     * degeneração). Por definição, apenas as variáveis não-básicas possuem valor
+     * fixo em zero.
      * 
      * @param index índice da coluna a ser verificada.
      * @return {@code true} se a coluna for básica; {@code false} caso contrário.
@@ -91,21 +99,20 @@ public class Tableau {
     }
 
     /**
-     * Realiza o pivoteamento do Tableau.
+     * Realiza a operação de pivoteamento no Tableau (Eliminação de Gauss-Jordan).
      * <p>
-     * Após a identificação do pivô, este método movimenta as variáveis,
-     * trocando a variável da linha pivô pela variável da coluna pivô. A
-     * intersecção entre a linha e coluna é o elemento pivô, ele é usado
-     * para realizar as operações nos valores durante a movimentação.
-     * <p>
-     * O primeiro movimento é a atualização da linha pivô, onde todos os
-     * valores da linha são divididos pelo valor do elemento pivô.
-     * O segundo movimento é a atualização dos valores das outras linhas,
-     * utilizando a seguinte fórmula:
-     * {@code novo valor = valor atual - valor da coluna pivô na linha atual * elemento pivô}.
-     * <p>
+     * O processo ocorre em duas etapas principais:
+     * <ol>
+     * <li><b>Atualização da Linha Pivô:</b> Todos os elementos da linha pivô são
+     * divididos pelo elemento pivô, normalizando-o para 1.</li>
+     * <li><b>Atualização das Demais Linhas (incluindo a linha Z):</b> Para cada
+     * outra linha {@code i}, aplica-se a operação de eliminação:
+     * <br>
+     * {@code Nova Linha_i = Linha_i - (Coeficiente na coluna pivô) * (Linha Pivô Atualizada)}.
+     * </li>
+     * </ol>
      *
-     * @see SimplexSolver#iterate(SimplexProblem, List)
+     * @see SimplexSolver
      */
     public void pivot() {
         basicIndexes[pivotRow] = pivotColumn;

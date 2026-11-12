@@ -22,7 +22,13 @@ public class SimplexTestFactory {
 
     /**
      * Cria um problema de programação linear de maximização para teste.
-     * 
+     * <ul>
+     * <li>Max Z = 5x₁ + 4x₂ + 3x₃ + 6x₄</li>
+     * <li>x₁ + x₂ + x₃ + x₄ &#8804; 20</li>
+     * <li>2x₁ + x₂ + 3x₃ + 4x₄ &#8805; 24</li>
+     * <li>x₁ + 2x₂ + x₄ = 15</li>
+     * </ul>
+     *
      * @return problema de maximização.
      */
     public static @NonNull SimplexProblem getMaxExample() {
@@ -151,6 +157,12 @@ public class SimplexTestFactory {
 
     /**
      * Cria um problema de programação linear de minimização para teste.
+     * <ul>
+     * <li>Min Z = 3x₁ + 2x₂ + 5x₃ + 4x₄</li>
+     * <li>2x₁ + x₂ + 3x₃ + x₄ &#8804; 40</li>
+     * <li>x₁ + 2x₂ + x₃ + 2x₄ &#8805; 20</li>
+     * <li>3x₁ + 2x₃ + 2x₄ = 30</li>
+     * </ul>
      * 
      * @return problema de minimização.
      */
@@ -237,6 +249,11 @@ public class SimplexTestFactory {
     /**
      * Cria um problema de programação linear com múltiplas soluções ótimas para
      * teste.
+     * <ul>
+     * <li>Max Z = 2x₁ + 4x₂</li>
+     * <li>x₁ + 2x₂ &#8804; 10</li>
+     * <li>x₁ + x₂ &#8804; 6</li>
+     * </ul>
      * 
      * @return problema com múltiplas soluções ótimas.
      */
@@ -304,6 +321,11 @@ public class SimplexTestFactory {
 
     /**
      * Cria um problema de programação linear inviável para teste.
+     * <ul>
+     * <li>Max Z = 3x₁ + 2x₂</li>
+     * <li>x₁ + x₂ &#8804; 5</li>
+     * <li>x₁ + x₂ &#8805; 10</li>
+     * </ul>
      * 
      * @return problema inviável.
      */
@@ -371,6 +393,11 @@ public class SimplexTestFactory {
 
     /**
      * Cria um problema de programação linear ilimitado para teste.
+     * <ul>
+     * <li>Max Z = 2x₁ + x₂</li>
+     * <li>x₁ - x₂ &#8804; 10</li>
+     * <li>2x₁ - x₂ &#8804; 40</li>
+     * </ul>
      * 
      * @return problema ilimitado.
      */
@@ -448,6 +475,16 @@ public class SimplexTestFactory {
     /**
      * Cria um problema de programação linear degenerado que pode causar ciclos para
      * teste.
+     * <ul>
+     * <li>Max Z = 10x₁ - 57x₂ - 9x₃ - 24x₄</li>
+     * <li>0.5x₁ - 5.5x₂ - 2.5x₃ + 9x₄ &#8804; 0</li>
+     * <li>0.5x₁ - 1.5x₂ - 0.5x₃ + 1x₄ &#8804; 0</li>
+     * <li>x₁ &#8804; 1</li>
+     * </ul>
+     * <p>
+     * Este problema é conhecido por ser degenerado e pode levar a ciclos durante a
+     * execução do algoritmo Simplex.
+     * </p>
      * 
      * @return problema degenerado que pode causar ciclos.
      */
@@ -465,6 +502,21 @@ public class SimplexTestFactory {
         return problem;
     }
 
+    /**
+     * Cria um problema de programação linear com lado direito negativo para teste.
+     * <ul>
+     * <li>Min Z = x₁ + x₂ + x₃</li>
+     * <li>-x₁ &#8804; -2</li>
+     * <li>-x₂ = -1</li>
+     * <li>-x₃ &#8805; -4</li>
+     * </ul>
+     * <p>
+     * O simplex não permite que o lado direito de uma restrição seja negativo, e este
+     * problema testa a capacidade do algoritmo de converter essas restrições.
+     * </p>
+     * 
+     * @return problema com lado direito negativo.
+     */
     public static @NonNull SimplexProblem getNegativeRhsExample() {
         SimplexProblem problem = new SimplexProblem();
         problem.setOptimizationType(OptimizationType.MINIMIZATION);
@@ -479,6 +531,21 @@ public class SimplexTestFactory {
         return problem;
     }
 
+    /**
+     * Cria um problema de programação linear com solução inviável para teste.
+     * <ul>
+     * <li>Max Z = x₁</li>
+     * <li>x₂ &#8804; 1</li>
+     * <li>x₂ &#8805; 2</li>
+     * </ul>
+     * <p>
+     * Por ser maximização e x1 não possuir restrições, a solução aparenta ser
+     * ilimitado. Entretanto, as restrições de {@code x2} são impossíveis
+     * matematicamente, tornando o problema inviável.
+     * </p>
+     * 
+     * @return problema com solução inviável.
+     */
     public static @NonNull SimplexProblem getFalseUnboundedExample() {
         SimplexProblem problem = new SimplexProblem();
         problem.setOptimizationType(OptimizationType.MAXIMIZATION);

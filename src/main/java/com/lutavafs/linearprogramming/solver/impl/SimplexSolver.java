@@ -59,18 +59,27 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
     }
 
     /**
-     * Cria o {@link Tableau} inicial para o problema de Simplex.
+     * Cria o {@link Tableau} inicial para o problema de Programação Linear no
+     * Método Simplex.
      * <p>
-     * Para criar um tableau, é necessário determinar o número de variáveis de
-     * decisão, variáveis de folga e variáveis artificiais. O tableau é então
-     * preenchido com os coeficientes das restrições e da função objetivo.
-     * <p>
-     * No Simplex, o lado direito da função objetivo é definido como {@code 0}, e as
-     * variáveis de folga e artificiais são adicionadas conforme necessário para
-     * transformar as restrições em equações.
-     * </p>
+     * O processo de construção compreende as seguintes etapas:
+     * <ol>
+     * <li><b>Normalização de RHS Negativo:</b> Se uma restrição possuir um valor de
+     * lado direito ({@code RHS}) estritamente menor que zero, os coeficientes da
+     * restrição e o {@code RHS} são multiplicados por {@code -1}, e o tipo da
+     * restrição é invertido ({@code LESS_EQUAL} torna-se {@code GREATER_EQUAL} e
+     * vice-versa; restrições {@code EQUAL} permanecem inalteradas).</li>
+     * <li><b>Dimensionamento:</b> Determina-se a quantidade necessária de variáveis
+     * de decisão ({@code x}), variáveis de folga/excesso ({@code s}) e variáveis
+     * artificiais ({@code a}).</li>
+     * <li><b>Montagem da Matriz:</b> O Tableau é preenchido com a função objetivo
+     * na linha {@code Z} (com as variáveis de folga/artificiais adequadamente
+     * ajustadas) e as restrições transformadas em equações com suas respectivas
+     * variáveis básicas iniciais.</li>
+     * </ol>
      * 
-     * @param problem problema de Simplex para o qual o tableau será criado.
+     * @param problem o problema de Programação Linear para o qual o tableau será
+     *                criado.
      */
     protected void createTableau(SimplexProblem problem) {
         int numX = problem.getObjectiveFunction().length;
@@ -264,13 +273,19 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
     }
 
     /**
-     * Encontra a coluna pivô no tableau.
+     * Encontra a coluna pivô no Tableau.
      * <p>
-     * A coluna pivô é a coluna com o menor coeficiente na linha Z.
-     * </p>
+     * A coluna pivô é selecionada com base no custo reduzido na linha {@code Z}:
+     * na forma padrão de maximização, um coeficiente estritamente negativo na linha
+     * {@code Z} (respeitando a tolerância {@code EPSILON}) indica que aumentar o
+     * valor dessa variável melhora o valor da função objetivo.
+     * <p>
+     * Se nenhuma coluna atender ao critério de negatividade, o método retorna um
+     * valor sentinela (indicando que a condição de otimalidade foi alcançada).
      * 
      * @param tableau tabela Simplex onde será encontrada a coluna pivô.
-     * @return o coeficiente da coluna pivô.
+     * @return o índice da coluna pivô selecionada, ou um valor sentinela se o ótimo
+     *         foi atingido.
      */
     protected BigMCoefficient findPivotColumn(Tableau tableau) {
         BigMCoefficient lowestCoefficient = new BigMCoefficient(Double.MAX_VALUE, Double.MAX_VALUE);
@@ -288,14 +303,19 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
     }
 
     /**
-     * Encontra a linha pivô no tableau.
+     * Encontra a linha pivô no Tableau utilizando o Teste da Razão Mínima.
      * <p>
-     * A linha pivô é determinada pelo menor resultado da divisão entre o lado
-     * direito da
-     * restrição e o valor da coluna pivô para cada linha. Se não houver uma linha
-     * válida (resultado negativo), o método define a linha como {@code -1},
-     * indicando que o problema é ilimitado.
-     * </p>
+     * O método calcula a razão entre o valor do lado direito ({@code RHS}) e o
+     * coeficiente da coluna pivô para cada linha.
+     * <ul>
+     * <li>Apenas linhas com coeficientes estritamente positivos na coluna pivô são
+     * elegíveis.</li>
+     * <li>A linha com a menor razão positiva é selecionada para garantir a
+     * viabilidade da solução.</li>
+     * <li>Se nenhuma linha for elegível (nenhum coeficiente positivo na coluna
+     * pivô), o método define o índice da linha como {@code -1}, indicando que o
+     * problema é ilimitado.</li>
+     * </ul>
      * 
      * @param tableau tabela Simplex onde será encontrada a linha pivô.
      */
@@ -425,12 +445,8 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
     }
 
     /**
-     * Retorna os valores das variáveis de decisão.
-     * <p>
-     * Os valores das variáveis são obtidos a partir da tabela Simplex.
-     * {@code x} representa as variáveis de decisão, {@code s} representa as
-     * variáveis de folga, e {@code a} representa as variáveis artificiais.
-     * </p>
+     * Retorna os valores das variáveis de decisão {@code x}, de folga {@code s} e
+     * artificiais {@code a} a partir da tabela Simplex.
      * 
      * @param tableau tabela Simplex contendo os dados do problema.
      * @return um mapa com os nomes e valores das variáveis de decisão.

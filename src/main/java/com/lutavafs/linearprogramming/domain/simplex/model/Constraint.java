@@ -20,16 +20,18 @@ import lombok.NoArgsConstructor;
 @Data
 public class Constraint {
     /**
-     * Variáveis da restrição.
+     * Coeficientes numéricos das variáveis na restrição.
      * <p>
-     * O tamanho do array define o número de variáveis do problema.
-     * Ex. {@code [2, -4, 1]} representa {@code 2x₁ - 4x₂ + x₃}.
-     * </p>
+     * O tamanho do array corresponde ao número de variáveis de decisão do problema
+     * (definido pela função objetivo), sendo que cada elemento representa o peso
+     * da variável correspondente na restrição.
+     * <br>
+     * Ex: {@code [2.0, -4.0, 1.0]} representa {@code 2x₁ - 4x₂ + x₃}.
      */
     private double[] coefficients;
 
     /**
-     * Tipo de restrição representados pelo sinal de igualdade (&#8804, &#8805 ou
+     * Tipo de restrição representados pelo sinal de igualdade (&#8804;;, &#8805; ou
      * =).
      */
     private ConstraintType constraintType;
