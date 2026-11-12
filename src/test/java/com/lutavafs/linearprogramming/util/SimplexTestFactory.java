@@ -14,7 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Fábrica de testes para o {@link SimplexSolver}, fornecendo exemplos de problemas e
+ * Fábrica de testes para o {@link SimplexSolver}, fornecendo exemplos de
+ * problemas e
  * resultados esperados para diferentes cenários.
  */
 public class SimplexTestFactory {

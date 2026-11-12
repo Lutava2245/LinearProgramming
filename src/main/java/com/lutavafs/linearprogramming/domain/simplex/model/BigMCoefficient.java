@@ -64,6 +64,14 @@ public record BigMCoefficient(double value, double bigM) {
         return Double.compare(this.value, coefficient.value);
     }
 
+    /**
+     * Verifica se o coeficiente é estritamente negativo, ou seja, se o valor real
+     * e os artificiais do coeficiente são menores que zero.
+     *
+     * @return {@code true} se o coeficiente for estritamente negativo;
+     *         {@code false} caso contrário.
+     * @see MathHelper#EPSILON
+     */
     public boolean isStrictlyNegative() {
         if (bigM < -MathHelper.EPSILON)
             return true;

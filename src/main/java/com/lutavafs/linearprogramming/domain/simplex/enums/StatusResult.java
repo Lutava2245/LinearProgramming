@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * Representa os resultados possíveis de um cálculo de Simplex atribuitos a
+ * Representa os resultados possíveis de um cálculo de Simplex atribuídos a
  * {@link SimplexResult}.
  * <p>
  * Os resultados possíveis são:

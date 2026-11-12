@@ -14,13 +14,13 @@ import lombok.Data;
 @Data
 public class Iteration {
     /**
-     * Título da Iteração. Pode ser {@code Inicial}, {@code Iteração} ou
+     * Título da Iteração. Pode ser {@code Inicial}, {@code Iteração N} ou
      * {@code Final}.
      */
     String title;
 
     /**
-     * Índices da coluna pivô e linha pivô do Tableau.
+     * Índices da coluna pivô e linha pivô do Tableau, desconsiderando Z.
      */
     int[] pivot;
 

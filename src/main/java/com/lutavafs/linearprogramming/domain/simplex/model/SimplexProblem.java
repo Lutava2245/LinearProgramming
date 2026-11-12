@@ -38,7 +38,7 @@ public class SimplexProblem {
      * <p>
      * A Função Objetivo é uma equação matemática que expressa o valor máximo
      * ou mínimo pelas variáveis de decisão.
-     * Ex. {@code Max Z = 5x₁ + 4x₂ + 3x₃})
+     * Ex. {@code Max Z = 5x₁ + 4x₂ + 3x₃}
      * <p>
      */
     @NonNull

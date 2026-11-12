@@ -13,7 +13,7 @@ import java.util.Collections;
  * Handler global para exceções da aplicação.
  * <p>
  * Esta classe é responsável por centralizar o tratamento de exceções,
- * fornecendo os recursos necessários para renderizar a paǵina sem a quebrar.
+ * fornecendo os recursos necessários para renderizar a página sem a quebrar.
  * <p>
  */
 @ControllerAdvice

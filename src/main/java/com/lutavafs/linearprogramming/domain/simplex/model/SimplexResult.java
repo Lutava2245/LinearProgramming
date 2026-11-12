@@ -24,7 +24,7 @@ public class SimplexResult {
     /**
      * Status do resultado do Simplex.
      *
-     * @see StatusResult
+     * @see StatusResult#getTitle()
      */
     private String status;
 

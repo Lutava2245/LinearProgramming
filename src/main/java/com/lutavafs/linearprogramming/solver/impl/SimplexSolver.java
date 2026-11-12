@@ -17,14 +17,25 @@ import java.util.*;
  */
 @Service
 public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
+    /**
+     * Número máximo de iterações permitidas para o algoritmo Simplex para evitar
+     * loops infinitos.
+     * <p>
+     * Em alguns casos, especialmente em problemas degenerados, o algoritmo
+     * pode entrar em um loop infinito ou demorar muito para convergir para
+     * uma solução ótima. Entretanto, é importante notar que atingir o limite
+     * não garante que o problema seja degenerado. Em casos raros, o algoritmo
+     * pode atingir o limite de iterações caso a solução ótima estiver longe do
+     * ponto inicial ou se houver muitas variáveis e restrições.
+     * </p>
+     */
     private static final int MAX_ITERATIONS = 1000;
 
     /**
      * Calcula o resultado do Simplex para um problema de Simplex dado.
      * <p>
      * O cálculo do Simplex envolve a criação do {@link Tableau} inicial, a iteração
-     * através
-     * de {@link Iteration}, e a determinação do {@link StatusResult}.
+     * através de {@link Iteration}, e a determinação do {@link StatusResult}.
      * </p>
      * 
      * @param problem problema de Simplex a ser resolvido.
@@ -188,7 +199,7 @@ public class SimplexSolver implements Solver<SimplexProblem, SimplexResult> {
      * valor da função objetivo considerando as variáveis artificiais.
      * </p>
      * 
-     * @param tableau o tabela Simplex cuja linha Z será reiniciada.
+     * @param tableau a tabela Simplex cuja linha Z será reiniciada.
      */
     protected void resetZRow(Tableau tableau) {
         for (int i = 0; i < tableau.getBasicIndexes().length; i++) {

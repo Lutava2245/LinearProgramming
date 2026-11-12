@@ -76,7 +76,7 @@ public class WebControllerTests {
     }
 
     @Test
-    @DisplayName("Deve fazer corretamente o Data Binding e renderizar a paǵina quando receber dados do formulário")
+    @DisplayName("Deve fazer corretamente o Data Binding e renderizar a página quando receber dados do formulário")
     void dataBindingTest() throws Exception {
         SimplexResult result = getMaxExampleResult();
 

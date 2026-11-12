@@ -52,6 +52,7 @@ public class WebController {
      * Processa e exibe o resultado do cálculo do Simplex.
      *
      * @param problem um objeto contendo o problema de Simplex para calcular.
+     * @param bindingResult interface que contém os resultados da validação do formulário.
      * @param model   interface que contem atributos para realizar cálculos do
      *                Simplex.
      * @return o template HTML contendo o resultado do Simplex.
